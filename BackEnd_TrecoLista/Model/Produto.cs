@@ -6,31 +6,33 @@ namespace BackEnd_TrecoLista.Model
     [Table("produto")]
     public class Produto
     {
-        public Produto()
-        {
-        }
-
+        [Column("id")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [Column("descricao")]
         [Required]
         [StringLength(255)]
         public string Descricao { get; set; }
 
+        [Column("link")]
         [StringLength(255)]
         public string Link { get; set; }
 
+        [Column("valor", TypeName = "decimal(10, 2)")]
         [Required]
-        [Column(TypeName = "decimal(10, 2)")]
         public decimal Valor { get; set; }
 
+        [Column("iamgempath")]
         [StringLength(255)]
         public string ImagemPath { get; set; }
 
+        [Column("categoria_id")]
         [Required]
         public int CategoriaId { get; set; }
 
+        [Column("plataforma_id)")]
         [Required]
         public int PlataformaId { get; set; }
 

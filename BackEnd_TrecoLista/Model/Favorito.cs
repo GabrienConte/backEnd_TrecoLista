@@ -6,18 +6,23 @@ namespace BackEnd_TrecoLista.Model
     [Table("favorito")]
     public class Favorito
     {
+        [Column("id")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [Column("produto_id")]
         [Required]
         public int ProdutoId { get; set; }
 
+        [Column("usuario_id")]
         [Required]
         public int UsuarioId { get; set; }
 
+        [Column("aviso")]
         public bool Aviso { get; set; }
 
+        [Column("prioridade")]
         public int Prioridade { get; set; }
 
         [ForeignKey("ProdutoId")]

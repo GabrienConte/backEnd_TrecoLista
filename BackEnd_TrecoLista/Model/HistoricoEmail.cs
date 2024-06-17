@@ -6,24 +6,29 @@ namespace BackEnd_TrecoLista.Model
     [Table("historicoemail")]
     public class HistoricoEmail
     {
+        [Column("id")]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [Column("assunto")]
         [Required]
         [StringLength(255)]
         public string Assunto { get; set; }
 
+        [Column("corpoemail",TypeName = "text")]
         [Required]
-        [Column(TypeName = "text")]
         public string CorpoEmail { get; set; }
 
+        [Column("dataenvio")]
         [Required]
         public DateTime DataEnvio { get; set; }
 
+        [Column("destino_id")]
         [Required]
         public int DestinoId { get; set; }
 
+        [Column("produto_id")]
         [Required]
         public int ProdutoId { get; set; }
 
