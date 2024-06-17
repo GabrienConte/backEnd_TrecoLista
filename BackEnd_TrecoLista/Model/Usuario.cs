@@ -26,5 +26,14 @@ namespace BackEnd_TrecoLista.Model
         [Required]
         [StringLength(50)]
         public string TipoUsuario { get; set; }
+
+        public Usuario(int id, string email, string senha, string login, string tipoUsuario)
+        {
+            Id = id;
+            Email = email;
+            Senha = senha;
+            Login = login;
+            TipoUsuario = tipoUsuario;
+        }
     }
 }
