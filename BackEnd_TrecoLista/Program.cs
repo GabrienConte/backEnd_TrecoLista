@@ -48,6 +48,16 @@ builder.Services.AddTransient<IProdutoRepository, ProdutoRepository>();
 //builder.Services.AddTransient<IHistoricoEmailRepository, HistoricoEmailRepository>();
 //builder.Services.AddTransient<IFavoritoRepository, FavoritoRepository>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "MyPolicy",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+        });
+
+});
+
 var key = Encoding.ASCII.GetBytes(BackEnd_TrecoLista.Key.Secret);
 
 builder.Services.AddAuthentication(x =>
@@ -75,6 +85,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("MyPolicy");
 
 app.UseHttpsRedirection();
 
