@@ -22,5 +22,10 @@ namespace BackEnd_TrecoLista.Repository
                 .Include(p => p.Categoria)
                 .ToList();
         }
+
+        public Produto? Get(int id)
+        {
+            return _context.Produtos.Find(id);
+        }
     }
 }

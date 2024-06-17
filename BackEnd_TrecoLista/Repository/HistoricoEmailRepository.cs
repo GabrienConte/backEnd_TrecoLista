@@ -11,16 +11,17 @@ namespace BackEnd_TrecoLista.Repository
 
         public void Add(HistoricoEmail historicoEmail)
         {
-            _context.HistoricoEmails.Add(historicoEmail);
-            _context.SaveChanges();
+            //_context.HistoricoEmails.Add(historicoEmail);
+            //_context.SaveChanges();
         }
 
         public List<HistoricoEmail> Get()
         {
-            return _context.HistoricoEmails
-                .Include(he => he.Destino)
-                .Include(he => he.Produto)
-                .ToList();
+            //return _context.HistoricoEmails
+            //    .Include(he => he.Destino)
+            //    .Include(he => he.Produto)
+            //    .ToList();
+            return null;
         }
     }
 }

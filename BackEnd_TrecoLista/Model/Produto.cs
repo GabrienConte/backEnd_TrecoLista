@@ -24,7 +24,7 @@ namespace BackEnd_TrecoLista.Model
         [Required]
         public decimal Valor { get; set; }
 
-        [Column("iamgempath")]
+        [Column("imagempath")]
         [StringLength(255)]
         public string ImagemPath { get; set; }
 
@@ -32,7 +32,7 @@ namespace BackEnd_TrecoLista.Model
         [Required]
         public int CategoriaId { get; set; }
 
-        [Column("plataforma_id)")]
+        [Column("plataforma_id")]
         [Required]
         public int PlataformaId { get; set; }
 
@@ -53,6 +53,17 @@ namespace BackEnd_TrecoLista.Model
             PlataformaId = plataformaId;
             Categoria = categoria;
             Plataforma = plataforma;
+        }
+
+        public Produto(int id, string descricao, string link, decimal valor, string imagemPath, int categoriaId, int plataformaId)
+        {
+            Id = id;
+            Descricao = descricao;
+            Link = link;
+            Valor = valor;
+            ImagemPath = imagemPath;
+            CategoriaId = categoriaId;
+            PlataformaId = plataformaId;
         }
     }
 }

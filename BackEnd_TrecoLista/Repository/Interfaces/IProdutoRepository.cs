@@ -7,5 +7,7 @@ namespace BackEnd_TrecoLista.Repository.Interfaces
         void Add(Produto produto);
 
         List<Produto> Get();
+
+        Produto? Get(int id);
     }
 }

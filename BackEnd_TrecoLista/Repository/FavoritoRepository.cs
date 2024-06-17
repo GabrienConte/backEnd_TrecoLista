@@ -16,16 +16,18 @@ namespace BackEnd_TrecoLista.Repository
 
         public void Add(Favorito favorito)
         {
-            _context.Favoritos.Add(favorito);
-            _context.SaveChanges();
+            //_context.Favoritos.Add(favorito);
+            //_context.SaveChanges();
         }
 
         public List<Favorito> Get()
         {
-            return _context.Favoritos
-                .Include(f => f.Usuario)
-                .Include(f => f.Produto)
-                .ToList();
+            //return _context.Favoritos
+            //    .Include(f => f.Usuario)
+            //    .Include(f => f.Produto)
+            //    .ToList();
+
+            return null;
         }
     }
 }
