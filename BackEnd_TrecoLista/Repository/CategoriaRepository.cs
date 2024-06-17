@@ -4,19 +4,19 @@ using BackEnd_TrecoLista.Repository.Interfaces;
 
 namespace BackEnd_TrecoLista.Repository
 {
-    public class UsuarioRepository : IUsuarioRepository
+    public class CategoriaRepository : ICategoriaRepository
     {
         private readonly ConnectionContext _context = new ConnectionContext();
 
-        public void Add(Usuario usuario)
+        public void Add(Categoria categoria)
         {
-           _context.Usuarios.Add(usuario);
-           _context.SaveChanges();
+            _context.Categorias.Add(categoria);
+            _context.SaveChanges();
         }
 
-        public List<Usuario> Get()
+        public List<Categoria> Get()
         {
-            return _context.Usuarios.ToList();
+            return _context.Categorias.ToList();
         }
     }
 }
