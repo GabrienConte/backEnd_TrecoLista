@@ -18,5 +18,11 @@ namespace BackEnd_TrecoLista.Repository
         {
             return _context.Usuarios.ToList();
         }
+
+        public Usuario? GetAuth(string username, string senha)
+        {
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.Email.Equals(username) || u.Login.Equals(username) && u.Senha.Equals(senha));
+            return usuario;
+        }
     }
 }

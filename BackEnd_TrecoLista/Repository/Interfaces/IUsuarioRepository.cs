@@ -7,5 +7,7 @@ namespace BackEnd_TrecoLista.Repository.Interfaces
         void Add(Usuario usuario);
 
         List<Usuario> Get();
+
+        Usuario? GetAuth(string username, string senha);
     }
 }

@@ -2,6 +2,7 @@
 using BackEnd_TrecoLista.Repository;
 using BackEnd_TrecoLista.Repository.Interfaces;
 using BackEnd_TrecoLista.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd_TrecoLista.Controllers
@@ -17,6 +18,7 @@ namespace BackEnd_TrecoLista.Controllers
             _produtoRepository = produtoRepository ?? throw new ArgumentNullException();
         }
 
+        [Authorize]
         [HttpPost]
         [Route("{id}/download")]
         public IActionResult DownloadFoto(int id)
@@ -28,6 +30,7 @@ namespace BackEnd_TrecoLista.Controllers
             return File(dataBytes, "image/png");
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Add([FromForm] ProdutoViewModel produtoViewModel)
         {
@@ -54,6 +57,7 @@ namespace BackEnd_TrecoLista.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Get()
         {
