@@ -6,6 +6,11 @@ namespace BackEnd_TrecoLista.Infraestrutura
     public class ConnectionContext : DbContext
     {
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Categoria> Categorias { get; set; }
+        public DbSet<Plataforma> Plataformas { get; set; }
+        public DbSet<Produto> Produtos { get; set; }
+        public DbSet<HistoricoEmail> HistoricoEmails { get; set; }
+        public DbSet<Favorito> Favoritos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql(
