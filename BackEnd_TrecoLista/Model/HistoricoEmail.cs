@@ -16,7 +16,7 @@ namespace BackEnd_TrecoLista.Model
         [StringLength(255)]
         public string Assunto { get; set; }
 
-        [Column("corpoemail",TypeName = "text")]
+        [Column("corpoemail", TypeName = "text")]
         [Required]
         public string CorpoEmail { get; set; }
 
@@ -46,8 +46,10 @@ namespace BackEnd_TrecoLista.Model
             DataEnvio = dataEnvio;
             DestinoId = destinoId;
             ProdutoId = produtoId;
-            Destino = destino;
-            Produto = produto;
+        }
+
+        public HistoricoEmail()
+        {
         }
     }
 }

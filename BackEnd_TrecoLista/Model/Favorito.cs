@@ -38,8 +38,10 @@ namespace BackEnd_TrecoLista.Model
             UsuarioId = usuarioId;
             Aviso = aviso;
             Prioridade = prioridade;
-            Produto = produto;
-            Usuario = usuario;
+        }
+
+        public Favorito()
+        {
         }
     }
 }

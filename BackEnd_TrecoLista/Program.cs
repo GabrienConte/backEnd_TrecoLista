@@ -11,11 +11,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
-builder.Services.AddTransient<IProdutoRepository, ProdutoRepository>();
-builder.Services.AddTransient<IPlataformaRepository, PlataformaRepository>();
-builder.Services.AddTransient<IHistoricoEmailRepository, HistoricoEmailRepository>();
-builder.Services.AddTransient<IFavoritoRepository, FavoritoRepository>();
 builder.Services.AddTransient<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddTransient<IPlataformaRepository, PlataformaRepository>();
+builder.Services.AddTransient<IProdutoRepository, ProdutoRepository>();
+//builder.Services.AddTransient<IHistoricoEmailRepository, HistoricoEmailRepository>();
+//builder.Services.AddTransient<IFavoritoRepository, FavoritoRepository>();
 
 var app = builder.Build();
 
