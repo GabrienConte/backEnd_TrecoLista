@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd_TrecoLista.Model
 {
-    [Table("Usuario")]
+    [Table("usuario")]
     public class Usuario
     {
         [Key]
