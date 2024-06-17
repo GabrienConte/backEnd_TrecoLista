@@ -6,7 +6,7 @@ namespace BackEnd_TrecoLista.Repository.Interfaces
     {
         void Add(Produto produto);
 
-        List<Produto> Get();
+        List<Produto> Get(int pageNumber, int pageQuantity);
 
         Produto? Get(int id);
     }

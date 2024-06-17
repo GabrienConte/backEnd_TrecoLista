@@ -57,11 +57,10 @@ namespace BackEnd_TrecoLista.Controllers
             return Ok();
         }
 
-        [Authorize]
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(int pageNumber, int pageQuantity)
         {
-            var produtos = _produtoRepository.Get();
+            var produtos = _produtoRepository.Get(pageNumber, pageQuantity);
 
             return Ok(produtos);
         }

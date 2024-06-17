@@ -15,11 +15,13 @@ namespace BackEnd_TrecoLista.Repository
             _context.SaveChanges();
         }
 
-        public List<Produto> Get()
+        public List<Produto> Get(int pageNumber, int pageQuantity)
         {
             return _context.Produtos
                 .Include(p => p.Plataforma)
                 .Include(p => p.Categoria)
+                .Skip((pageNumber - 1) * pageQuantity)
+                .Take(pageQuantity)
                 .ToList();
         }
 
