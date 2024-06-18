@@ -1,5 +1,6 @@
 ﻿using BackEnd_TrecoLista.Repository.Interfaces;
 using BackEnd_TrecoLista.Services;
+using BackEnd_TrecoLista.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd_TrecoLista.Controllers
@@ -16,14 +17,14 @@ namespace BackEnd_TrecoLista.Controllers
         }
 
         [HttpPost]
-        public IActionResult Auth(string username, string password)
+        public IActionResult Auth([FromBody] AuthViewModel authViewModel)
         {
-            var usuario =  _usuarioRepository.GetAuth(username, password);
+            var usuario =  _usuarioRepository.GetAuth(authViewModel.Username, authViewModel.Password);
 
             if (usuario != null)
             {
                 var token = TokenService.GenerateToken(usuario);
-                return Ok(token);
+                return Ok(new { token });
             }
             else 
             {

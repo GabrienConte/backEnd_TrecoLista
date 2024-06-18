@@ -47,14 +47,18 @@ builder.Services.AddTransient<IPlataformaRepository, PlataformaRepository>();
 builder.Services.AddTransient<IProdutoRepository, ProdutoRepository>();
 //builder.Services.AddTransient<IHistoricoEmailRepository, HistoricoEmailRepository>();
 //builder.Services.AddTransient<IFavoritoRepository, FavoritoRepository>();
+var AllowAllOrigins = "_AllowAllOrigins";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: "MyPolicy",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
-        });
+    options.AddPolicy(name: AllowAllOrigins,
+            policy =>
+            {
+                policy.WithOrigins("http://localhost:4200/")
+                                    .AllowAnyHeader()
+                                    .AllowAnyMethod()
+                                    .AllowAnyOrigin();
+            });
 
 });
 
@@ -86,7 +90,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("MyPolicy");
+app.UseCors(AllowAllOrigins);
 
 app.UseHttpsRedirection();
 
