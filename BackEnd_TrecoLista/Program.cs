@@ -1,3 +1,4 @@
+using BackEnd_TrecoLista.Infraestrutura.Identity;
 using BackEnd_TrecoLista.Infraestrutura.Repository;
 using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -62,7 +63,7 @@ builder.Services.AddCors(options =>
 
 });
 
-var key = Encoding.ASCII.GetBytes(BackEnd_TrecoLista.Key.Secret);
+var key = Encoding.ASCII.GetBytes(Key.Secret);
 
 builder.Services.AddAuthentication(x =>
 {

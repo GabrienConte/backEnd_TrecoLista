@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BackEnd_TrecoLista.Application.ViewModel;
 
-namespace BackEnd_TrecoLista.Controllers
+namespace BackEnd_TrecoLista.Application.Controllers
 {
     [ApiController]
     [Route("api/v1/categoria")]

@@ -1,4 +1,4 @@
-﻿namespace BackEnd_TrecoLista
+﻿namespace BackEnd_TrecoLista.Infraestrutura.Identity
 {
     public class Key
     {

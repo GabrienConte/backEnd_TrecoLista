@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Domain\Services\Interfaces\" />
     <Folder Include="Storage\" />
   </ItemGroup>
 

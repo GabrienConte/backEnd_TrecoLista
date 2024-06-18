@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace BackEnd_TrecoLista.Application.Services
+namespace BackEnd_TrecoLista.Infraestrutura.Identity
 {
     public class TokenService
     {

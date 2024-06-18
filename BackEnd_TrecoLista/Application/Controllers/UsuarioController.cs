@@ -4,7 +4,7 @@ using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BackEnd_TrecoLista.Controllers
+namespace BackEnd_TrecoLista.Application.Controllers
 {
     [ApiController]
     [Route("api/v1/usuario")]
