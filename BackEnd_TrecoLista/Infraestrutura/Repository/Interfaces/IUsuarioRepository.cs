@@ -1,6 +1,6 @@
-﻿using BackEnd_TrecoLista.Model;
+﻿using BackEnd_TrecoLista.Domain.Model;
 
-namespace BackEnd_TrecoLista.Repository.Interfaces
+namespace BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces
 {
     public interface IUsuarioRepository
     {

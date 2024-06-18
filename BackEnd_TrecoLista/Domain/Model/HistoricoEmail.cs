@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace BackEnd_TrecoLista.Model
+namespace BackEnd_TrecoLista.Domain.Model
 {
     [Table("historicoemail")]
     public class HistoricoEmail

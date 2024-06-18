@@ -1,8 +1,8 @@
 ﻿using BackEnd_TrecoLista.Infraestrutura;
-using BackEnd_TrecoLista.Model;
-using BackEnd_TrecoLista.Repository.Interfaces;
+using BackEnd_TrecoLista.Domain.Model;
+using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
 
-namespace BackEnd_TrecoLista.Repository
+namespace BackEnd_TrecoLista.Infraestrutura.Repository
 {
     public class UsuarioRepository : IUsuarioRepository
     {
@@ -10,8 +10,8 @@ namespace BackEnd_TrecoLista.Repository
 
         public void Add(Usuario usuario)
         {
-           _context.Usuarios.Add(usuario);
-           _context.SaveChanges();
+            _context.Usuarios.Add(usuario);
+            _context.SaveChanges();
         }
 
         public List<Usuario> Get()

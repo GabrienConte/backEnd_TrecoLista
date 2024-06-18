@@ -1,4 +1,4 @@
-﻿namespace BackEnd_TrecoLista.ViewModel
+﻿namespace BackEnd_TrecoLista.Application.ViewModel
 {
     public class AuthViewModel
     {

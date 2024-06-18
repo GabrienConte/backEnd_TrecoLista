@@ -1,6 +1,6 @@
-﻿using BackEnd_TrecoLista.Repository.Interfaces;
-using BackEnd_TrecoLista.Services;
-using BackEnd_TrecoLista.ViewModel;
+﻿using BackEnd_TrecoLista.Application.Services;
+using BackEnd_TrecoLista.Application.ViewModel;
+using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd_TrecoLista.Controllers

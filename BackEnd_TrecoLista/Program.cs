@@ -1,5 +1,5 @@
-using BackEnd_TrecoLista.Repository;
-using BackEnd_TrecoLista.Repository.Interfaces;
+using BackEnd_TrecoLista.Infraestrutura.Repository;
+using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;

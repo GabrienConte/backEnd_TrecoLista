@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace BackEnd_TrecoLista.Model
+namespace BackEnd_TrecoLista.Domain.Model
 {
-    [Table("categoria")]
-    public class Categoria
+    [Table("plataforma")]
+    public class Plataforma
     {
         [Column("id")]
         [Key]
@@ -16,15 +16,10 @@ namespace BackEnd_TrecoLista.Model
         [StringLength(255)]
         public string Descricao { get; set; }
 
-        [Column("ativo")]
-        [Required]
-        public bool Ativo { get; set; }
-
-        public Categoria(int id, string descricao, bool ativo)
+        public Plataforma(int id, string descricao)
         {
             Id = id;
             Descricao = descricao;
-            Ativo = ativo;
         }
     }
 }

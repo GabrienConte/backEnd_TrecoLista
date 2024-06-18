@@ -1,4 +1,4 @@
-﻿using BackEnd_TrecoLista.Model;
+﻿using BackEnd_TrecoLista.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd_TrecoLista.Infraestrutura
