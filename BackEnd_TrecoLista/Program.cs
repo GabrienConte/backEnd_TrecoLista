@@ -1,10 +1,14 @@
+using BackEnd_TrecoLista.Domain.Services.Interfaces;
+using BackEnd_TrecoLista.Domain.Services;
 using BackEnd_TrecoLista.Infraestrutura.Identity;
 using BackEnd_TrecoLista.Infraestrutura.Repository;
 using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using BackEnd_TrecoLista.Infraestrutura.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => 
 {
@@ -44,6 +51,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddTransient<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddTransient<ICategoriaService, CategoriaService>();
 builder.Services.AddTransient<IPlataformaRepository, PlataformaRepository>();
 builder.Services.AddTransient<IProdutoRepository, ProdutoRepository>();
 //builder.Services.AddTransient<IHistoricoEmailRepository, HistoricoEmailRepository>();

@@ -19,12 +19,5 @@ namespace BackEnd_TrecoLista.Domain.Model
         [Column("ativo")]
         [Required]
         public bool Ativo { get; set; }
-
-        public Categoria(int id, string descricao, bool ativo)
-        {
-            Id = id;
-            Descricao = descricao;
-            Ativo = ativo;
-        }
     }
 }
