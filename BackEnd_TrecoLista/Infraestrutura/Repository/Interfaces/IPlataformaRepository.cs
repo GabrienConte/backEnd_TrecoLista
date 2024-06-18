@@ -7,7 +7,7 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces
         Task<IEnumerable<Plataforma>> GetAllAsync();
         Task<Plataforma> GetByIdAsync(int id);
         Task<Plataforma> AddAsync(Plataforma plataforma);
-        Task<Plataforma> UpdateAsync(Plataforma plataforma);
+        Task UpdateAsync(Plataforma plataforma);
         Task DeleteAsync(int id);
     }
 }

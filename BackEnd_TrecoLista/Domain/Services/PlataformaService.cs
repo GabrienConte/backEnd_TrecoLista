@@ -36,16 +36,14 @@ namespace BackEnd_TrecoLista.Domain.Services
             return _mapper.Map<PlataformaDto>(createdPlataforma);
         }
 
-        public async Task<PlataformaDto> UpdateAsync(int id, PlataformaUpdateDto plataformaUpdateDto)
+        public async Task UpdateAsync(int id, PlataformaUpdateDto plataformaUpdateDto)
         {
             var plataforma = await _plataformaRepository.GetByIdAsync(id);
             if (plataforma != null)
             {
                 _mapper.Map(plataformaUpdateDto, plataforma);
-                var plataformaAtualizada = await _plataformaRepository.UpdateAsync(plataforma);
-                return _mapper.Map<PlataformaDto>(plataformaAtualizada);
+                await _plataformaRepository.UpdateAsync(plataforma);
             }
-            return null;
         }
 
         public async Task DeleteAsync(int id)

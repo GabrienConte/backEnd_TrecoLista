@@ -4,10 +4,12 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces
 {
     public interface IUsuarioRepository
     {
-        void Add(Usuario usuario);
+        Task<IEnumerable<Usuario>> GetAllAsync();
+        Task<Usuario> GetByIdAsync(int id);
+        Task<Usuario> AddAsync(Usuario usuario);
+        Task UpdateAsync(Usuario usuario);
+        Task DeleteAsync(int id);
 
-        List<Usuario> Get();
-
-        Usuario? GetAuth(string username, string senha);
+        Task<Usuario> FindByEmailOuLoginAsync(string emailOuLogin);
     }
 }

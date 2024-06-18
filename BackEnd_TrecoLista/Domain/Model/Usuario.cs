@@ -32,19 +32,16 @@ namespace BackEnd_TrecoLista.Domain.Model
         [StringLength(50)]
         public string TipoUsuario { get; set; }
 
-        public Usuario(string email, string senha)
+        public Usuario()
         {
-            Email = email;
-            Senha = senha;
         }
 
-        public Usuario(int id, string email, string senha, string login, string tipoUsuario)
+        public Usuario(int id, string email, string login, string senha)
         {
             Id = id;
             Email = email;
-            Senha = senha;
             Login = login;
-            TipoUsuario = tipoUsuario;
+            Senha = senha;
         }
     }
 }

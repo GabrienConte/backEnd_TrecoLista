@@ -36,16 +36,14 @@ namespace BackEnd_TrecoLista.Domain.Services
             return _mapper.Map<CategoriaDto>(categoriaCriada);
         }
 
-        public async Task<CategoriaDto> UpdateAsync(int id, CategoriaUpdateDto categoriaUpdateDto)
+        public async Task UpdateAsync(int id, CategoriaUpdateDto categoriaUpdateDto)
         {
             var categoria = await _categoriaRepository.GetByIdAsync(id);
             if (categoria != null)
             {
                 _mapper.Map(categoriaUpdateDto, categoria);
-                var categoriaAtualizada  = await _categoriaRepository.UpdateAsync(categoria);
-                return _mapper.Map<CategoriaDto>(categoriaAtualizada);
+                await _categoriaRepository.UpdateAsync(categoria);
             }
-            return null;
         }
 
         public async Task DeleteAsync(int id)

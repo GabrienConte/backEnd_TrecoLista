@@ -25,11 +25,10 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository
             return categoriaCriada.Entity;
         }
 
-        public async Task<Categoria> UpdateAsync(Categoria categoria)
+        public async Task UpdateAsync(Categoria categoria)
         {
-            var categoriaAualizada =  _context.Categorias.Update(categoria);
+            _context.Categorias.Update(categoria);
             await _context.SaveChangesAsync();
-            return categoriaAualizada.Entity;
         }
 
         public async Task DeleteAsync(int id)

@@ -7,7 +7,7 @@ namespace BackEnd_TrecoLista.Domain.Services.Interfaces
         Task<IEnumerable<PlataformaDto>> GetAllAsync();
         Task<PlataformaDto> GetByIdAsync(int id);
         Task<PlataformaDto> AddAsync(PlataformaCreateDto plataformaCreateDto);
-        Task<PlataformaDto> UpdateAsync(int id, PlataformaUpdateDto plataformaUpdateDto);
+        Task UpdateAsync(int id, PlataformaUpdateDto plataformaUpdateDto);
         Task DeleteAsync(int id);
     }
 }

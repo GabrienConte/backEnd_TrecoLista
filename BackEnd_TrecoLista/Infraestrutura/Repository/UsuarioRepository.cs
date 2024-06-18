@@ -1,6 +1,6 @@
-﻿using BackEnd_TrecoLista.Infraestrutura;
-using BackEnd_TrecoLista.Domain.Model;
+﻿using BackEnd_TrecoLista.Domain.Model;
 using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd_TrecoLista.Infraestrutura.Repository
 {
@@ -8,21 +8,43 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository
     {
         private readonly ConnectionContext _context = new ConnectionContext();
 
-        public void Add(Usuario usuario)
+        public async Task<IEnumerable<Usuario>> GetAllAsync()
         {
-            _context.Usuarios.Add(usuario);
-            _context.SaveChanges();
+            return await _context.Usuarios.ToListAsync();
         }
 
-        public List<Usuario> Get()
+        public async Task<Usuario> GetByIdAsync(int id)
         {
-            return _context.Usuarios.ToList();
+            return await _context.Usuarios.FindAsync(id);
         }
 
-        public Usuario? GetAuth(string username, string senha)
+        public async Task<Usuario> AddAsync(Usuario usuario)
         {
-            var usuario = _context.Usuarios.FirstOrDefault(u => u.Email.Equals(username) || u.Login.Equals(username) && u.Senha.Equals(senha));
-            return usuario;
+            var entityEntry = await _context.Usuarios.AddAsync(usuario);
+            await _context.SaveChangesAsync();
+            return entityEntry.Entity;
+        }
+
+        public async Task UpdateAsync(Usuario usuario)
+        {
+            _context.Usuarios.Update(usuario);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario != null)
+            {
+                _context.Usuarios.Remove(usuario);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<Usuario> FindByEmailOuLoginAsync(string emailOuLogin)
+        {
+            return await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Email == emailOuLogin || u.Login == emailOuLogin);
         }
     }
 }

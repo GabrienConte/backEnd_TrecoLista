@@ -25,11 +25,10 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository
             return entityEntry.Entity;
         }
 
-        public async Task<Plataforma> UpdateAsync(Plataforma plataforma)
+        public async Task UpdateAsync(Plataforma plataforma)
         {
-            var  plataformaAtualizada = _context.Plataformas.Update(plataforma);
+            _context.Plataformas.Update(plataforma);
             await _context.SaveChangesAsync();
-            return plataformaAtualizada.Entity;
         }
 
         public async Task DeleteAsync(int id)

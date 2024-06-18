@@ -1,6 +1,7 @@
 ﻿using BackEnd_TrecoLista.Application.ViewModel;
+using BackEnd_TrecoLista.Domain.DTOs.Usuario;
+using BackEnd_TrecoLista.Domain.Services.Interfaces;
 using BackEnd_TrecoLista.Infraestrutura.Identity;
-using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd_TrecoLista.Application.Controllers
@@ -9,17 +10,17 @@ namespace BackEnd_TrecoLista.Application.Controllers
     [Route("api/v1/auth")]
     public class AuthController : ControllerBase
     {
-        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IUsuarioService _usuarioService;
 
-        public AuthController(IUsuarioRepository usuarioRepository)
+        public AuthController(IUsuarioService usuarioService)
         {
-            _usuarioRepository = usuarioRepository ?? throw new ArgumentNullException();
+            _usuarioService = usuarioService;
         }
 
         [HttpPost]
-        public IActionResult Auth([FromBody] AuthViewModel authViewModel)
+        public async Task<ActionResult<UsuarioDto>> Login([FromBody] UsuarioLoginDto usuarioLoginDto)
         {
-            var usuario = _usuarioRepository.GetAuth(authViewModel.Username, authViewModel.Password);
+            var usuario = await _usuarioService.AuthenticateAsync(usuarioLoginDto);
 
             if (usuario != null)
             {

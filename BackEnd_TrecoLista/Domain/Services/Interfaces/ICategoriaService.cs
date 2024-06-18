@@ -8,7 +8,7 @@ namespace BackEnd_TrecoLista.Domain.Services.Interfaces
         Task<IEnumerable<CategoriaDto>> GetAllAsync();
         Task<CategoriaDto> GetByIdAsync(int id);
         Task<CategoriaDto> AddAsync(CategoriaCreateDto categoriaCreateDto);
-        Task<CategoriaDto> UpdateAsync(int id, CategoriaUpdateDto categoriaUpdateDto);
+        Task UpdateAsync(int id, CategoriaUpdateDto categoriaUpdateDto);
         Task DeleteAsync(int id);
     }
 }
