@@ -1,5 +1,4 @@
-﻿using BackEnd_TrecoLista.Infraestrutura;
-using BackEnd_TrecoLista.Domain.Model;
+﻿using BackEnd_TrecoLista.Domain.Model;
 using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

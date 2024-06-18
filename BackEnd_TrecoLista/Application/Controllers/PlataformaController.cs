@@ -3,6 +3,8 @@ using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BackEnd_TrecoLista.Application.ViewModel;
+using BackEnd_TrecoLista.Domain.DTOs.Plataforma;
+using BackEnd_TrecoLista.Domain.Services.Interfaces;
 
 namespace BackEnd_TrecoLista.Application.Controllers
 {
@@ -10,33 +12,55 @@ namespace BackEnd_TrecoLista.Application.Controllers
     [Route("api/v1/plataforma")]
     public class PlataformaController : ControllerBase
     {
-        private readonly IPlataformaRepository _plataformaRepository;
+        private readonly IPlataformaService _plataformaService;
 
-        public PlataformaController(IPlataformaRepository plataformaRepository)
+        public PlataformaController(IPlataformaService plataformaService)
         {
-            _plataformaRepository = plataformaRepository ?? throw new ArgumentNullException();
-        }
-
-        [Authorize]
-        [HttpPost]
-        public IActionResult Add(PlataformaViewModel plataformaViewModel)
-        {
-            var plataforma = new Plataforma(
-                0,
-                plataformaViewModel.Descricao
-                );
-            _plataformaRepository.Add(plataforma);
-
-            return Ok();
+            _plataformaService = plataformaService;
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult Get()
+        public async Task<ActionResult<IEnumerable<PlataformaDto>>> GetPlataformas()
         {
-            var plataformas = _plataformaRepository.Get();
-
+            var plataformas = await _plataformaService.GetAllAsync();
             return Ok(plataformas);
+        }
+
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PlataformaDto>> GetPlataforma(int id)
+        {
+            var plataforma = await _plataformaService.GetByIdAsync(id);
+            if (plataforma == null)
+            {
+                return NotFound();
+            }
+            return Ok(plataforma);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult<PlataformaDto>> PostPlataforma(PlataformaCreateDto plataformaCreateDto)
+        {
+            var plataformaDto = await _plataformaService.AddAsync(plataformaCreateDto);
+            return CreatedAtAction(nameof(GetPlataforma), new { id = plataformaDto.Id }, plataformaDto);
+        }
+
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutPlataforma(int id, PlataformaUpdateDto plataformaUpdateDto)
+        {
+            await _plataformaService.UpdateAsync(id, plataformaUpdateDto);
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePlataforma(int id)
+        {
+            await _plataformaService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

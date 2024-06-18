@@ -50,9 +50,14 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
+
 builder.Services.AddTransient<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddTransient<ICategoriaService, CategoriaService>();
+
+
 builder.Services.AddTransient<IPlataformaRepository, PlataformaRepository>();
+builder.Services.AddTransient<IPlataformaService, PlataformaService>();
+
 builder.Services.AddTransient<IProdutoRepository, ProdutoRepository>();
 //builder.Services.AddTransient<IHistoricoEmailRepository, HistoricoEmailRepository>();
 //builder.Services.AddTransient<IFavoritoRepository, FavoritoRepository>();

@@ -16,6 +16,10 @@ namespace BackEnd_TrecoLista.Domain.Model
         [StringLength(255)]
         public string Descricao { get; set; }
 
+        public Plataforma()
+        {
+        }
+
         public Plataforma(int id, string descricao)
         {
             Id = id;
