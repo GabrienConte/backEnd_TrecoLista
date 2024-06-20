@@ -1,5 +1,4 @@
-﻿using BackEnd_TrecoLista.Application.ViewModel;
-using BackEnd_TrecoLista.Domain.DTOs.Usuario;
+﻿using BackEnd_TrecoLista.Domain.DTOs.Usuario;
 using BackEnd_TrecoLista.Domain.Services.Interfaces;
 using BackEnd_TrecoLista.Infraestrutura.Identity;
 using Microsoft.AspNetCore.Mvc;

@@ -1,8 +1,8 @@
-﻿using BackEnd_TrecoLista.Domain.Model;
-using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using BackEnd_TrecoLista.Application.ViewModel;
+using BackEnd_TrecoLista.Domain.Services.Interfaces;
+using BackEnd_TrecoLista.Infraestrutura.Repository;
+using BackEnd_TrecoLista.Domain.DTOs.Produto;
 
 namespace BackEnd_TrecoLista.Application.Controllers
 {
@@ -10,58 +10,78 @@ namespace BackEnd_TrecoLista.Application.Controllers
     [Route("api/v1/produto")]
     public class ProdutoController : ControllerBase
     {
-        private readonly IProdutoRepository _produtoRepository;
+        private readonly IProdutoService _produtoService;
 
-        public ProdutoController(IProdutoRepository produtoRepository)
+        public ProdutoController(IProdutoService produtoService)
         {
-            _produtoRepository = produtoRepository ?? throw new ArgumentNullException();
+            _produtoService = produtoService;
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetAll()
+        {
+            var produtos = await _produtoService.GetAllAsync();
+            return Ok(produtos);
+        }
+
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProdutoDto>> GetById(int id)
+        {
+            var produto = await _produtoService.GetByIdAsync(id);
+            if (produto == null) return NotFound();
+            return Ok(produto);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult<ProdutoDto>> Create(ProdutoCreateDto produtoCreateDto)
+        {
+            var produto = await _produtoService.AddAsync(produtoCreateDto);
+            return CreatedAtAction(nameof(GetById), new { id = produto.Id }, produto);
+        }
+
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ProdutoDto>> Update(int id, ProdutoUpdateDto produtoUpdateDto)
+        {
+            var produto = await _produtoService.UpdateAsync(id, produtoUpdateDto);
+            if (produto == null) return NotFound();
+            return Ok(produto);
+        }
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var success = await _produtoService.DeleteAsync(id);
+            if (!success) return NotFound();
+            return NoContent();
+        }
+
 
         [Authorize]
         [HttpPost]
         [Route("{id}/download")]
-        public IActionResult DownloadFoto(int id)
+        public async Task<ActionResult> DownloadFoto(int id)
         {
-            var produto = _produtoRepository.Get(id);
+            var produto = await _produtoService.GetByIdAsync(id);
 
-            var dataBytes = System.IO.File.ReadAllBytes(produto.ImagemPath);
+            if (produto == null || string.IsNullOrEmpty(produto.ImagemPath))
+            {
+                return NotFound("Produto ou imagem não encontrada.");
+            }
 
-            return File(dataBytes, "image/png");
+            try
+            {
+                var dataBytes = await System.IO.File.ReadAllBytesAsync(produto.ImagemPath);
+                return File(dataBytes, "image/png", Path.GetFileName(produto.ImagemPath));
+            }
+            catch (FileNotFoundException)
+            {
+                return NotFound("Imagem não encontrada no servidor.");
+            }
         }
 
-        [Authorize]
-        [HttpPost]
-        public IActionResult Add([FromForm] ProdutoViewModel produtoViewModel)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var filePath = Path.Combine("Storage", produtoViewModel.Imagem.FileName);
-
-            using Stream fileStream = new FileStream(filePath, FileMode.Create);
-            produtoViewModel.Imagem.CopyTo(fileStream);
-
-            var produto = new Produto(
-                produtoViewModel.Id,
-                produtoViewModel.Descricao,
-                produtoViewModel.Link,
-                produtoViewModel.Valor,
-                filePath,
-                produtoViewModel.CategoriaId,
-                produtoViewModel.PlataformaId
-            );
-
-            _produtoRepository.Add(produto);
-
-            return Ok();
-        }
-
-        [HttpGet]
-        public IActionResult Get(int pageNumber, int pageQuantity)
-        {
-            var produtos = _produtoRepository.Get(pageNumber, pageQuantity);
-
-            return Ok(produtos);
-        }
     }
 }

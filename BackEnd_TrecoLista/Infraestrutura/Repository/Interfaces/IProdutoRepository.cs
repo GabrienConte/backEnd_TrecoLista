@@ -4,10 +4,10 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces
 {
     public interface IProdutoRepository
     {
-        void Add(Produto produto);
-
-        List<Produto> Get(int pageNumber, int pageQuantity);
-
-        Produto? Get(int id);
+        Task<IEnumerable<Produto>> GetAllAsync();
+        Task<Produto> GetByIdAsync(int id);
+        Task<Produto> AddAsync(Produto produto);
+        Task<Produto> UpdateAsync(Produto produto);
+        Task<bool> DeleteAsync(int id);
     }
 }

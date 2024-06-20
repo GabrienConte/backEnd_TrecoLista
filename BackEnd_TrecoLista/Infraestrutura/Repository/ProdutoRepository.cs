@@ -9,25 +9,38 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository
     {
         private readonly ConnectionContext _context = new ConnectionContext();
 
-        public void Add(Produto produto)
+        public async Task<IEnumerable<Produto>> GetAllAsync()
         {
-            _context.Produtos.Add(produto);
-            _context.SaveChanges();
+            return await _context.Set<Produto>().Include(p => p.Categoria).Include(p => p.Plataforma).ToListAsync();
         }
 
-        public List<Produto> Get(int pageNumber, int pageQuantity)
+        public async Task<Produto> GetByIdAsync(int id)
         {
-            return _context.Produtos
-                .Include(p => p.Plataforma)
-                .Include(p => p.Categoria)
-                .Skip((pageNumber - 1) * pageQuantity)
-                .Take(pageQuantity)
-                .ToList();
+            return await _context.Set<Produto>().Include(p => p.Categoria).Include(p => p.Plataforma).FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public Produto? Get(int id)
+        public async Task<Produto> AddAsync(Produto produto)
         {
-            return _context.Produtos.Find(id);
+            var entity = await _context.Set<Produto>().AddAsync(produto);
+            await _context.SaveChangesAsync();
+            return entity.Entity;
+        }
+
+        public async Task<Produto> UpdateAsync(Produto produto)
+        {
+            var entity = _context.Set<Produto>().Update(produto);
+            await _context.SaveChangesAsync();
+            return entity.Entity;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var produto = await _context.Set<Produto>().FindAsync(id);
+            if (produto == null) return false;
+
+            _context.Set<Produto>().Remove(produto);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

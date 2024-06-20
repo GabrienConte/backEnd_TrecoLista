@@ -9,6 +9,11 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using BackEnd_TrecoLista.Infraestrutura.Configurations;
+using Microsoft.Extensions.Configuration;
+using BackEnd_TrecoLista.Infraestrutura.Email;
+using MailKit;
+using Microsoft.AspNetCore.Connections;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +23,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("MailSettings"));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => 
@@ -60,8 +67,14 @@ builder.Services.AddTransient<IPlataformaRepository, PlataformaRepository>();
 builder.Services.AddTransient<IPlataformaService, PlataformaService>();
 
 builder.Services.AddTransient<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddTransient<IProdutoService, ProdutoService>();
+
+builder.Services.AddScoped<IFavoritoRepository, FavoritoRepository>();
+builder.Services.AddScoped<IFavoritoService, FavoritoService>();
+
+builder.Services.AddTransient<IEmailService, EmailService>();
 //builder.Services.AddTransient<IHistoricoEmailRepository, HistoricoEmailRepository>();
-//builder.Services.AddTransient<IFavoritoRepository, FavoritoRepository>();
+
 var AllowAllOrigins = "_AllowAllOrigins";
 
 builder.Services.AddCors(options =>

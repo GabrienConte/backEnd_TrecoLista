@@ -1,33 +1,51 @@
-﻿using BackEnd_TrecoLista.Infraestrutura;
-using BackEnd_TrecoLista.Domain.Model;
-using Microsoft.EntityFrameworkCore;
+﻿using BackEnd_TrecoLista.Domain.Model;
 using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd_TrecoLista.Infraestrutura.Repository
 {
     public class FavoritoRepository : IFavoritoRepository
     {
-        private readonly ConnectionContext _context;
+        private readonly ConnectionContext _context = new ConnectionContext();
 
-        public FavoritoRepository(ConnectionContext context)
+        public async Task<IEnumerable<Favorito>> GetAllAsync()
         {
-            _context = context;
+            return await _context.Set<Favorito>()
+                .Include(f => f.Produto)
+                .Include(f => f.Usuario)
+                .ToListAsync();
         }
 
-        public void Add(Favorito favorito)
+        public async Task<Favorito> GetByIdAsync(int id)
         {
-            //_context.Favoritos.Add(favorito);
-            //_context.SaveChanges();
+            return await _context.Set<Favorito>()
+                .Include(f => f.Produto)
+                .Include(f => f.Usuario)
+                .FirstOrDefaultAsync(f => f.Id == id);
         }
 
-        public List<Favorito> Get()
+        public async Task<Favorito> AddAsync(Favorito favorito)
         {
-            //return _context.Favoritos
-            //    .Include(f => f.Usuario)
-            //    .Include(f => f.Produto)
-            //    .ToList();
+            var entity = await _context.Set<Favorito>().AddAsync(favorito);
+            await _context.SaveChangesAsync();
+            return entity.Entity;
+        }
 
-            return null;
+        public async Task<Favorito> UpdateAsync(Favorito favorito)
+        {
+            var entity = _context.Set<Favorito>().Update(favorito);
+            await _context.SaveChangesAsync();
+            return entity.Entity;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var favorito = await _context.Set<Favorito>().FindAsync(id);
+            if (favorito == null) return false;
+
+            _context.Set<Favorito>().Remove(favorito);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

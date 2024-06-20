@@ -1,8 +1,5 @@
-﻿using BackEnd_TrecoLista.Domain.Model;
-using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using BackEnd_TrecoLista.Application.ViewModel;
 using BackEnd_TrecoLista.Domain.DTOs.Plataforma;
 using BackEnd_TrecoLista.Domain.Services.Interfaces;
 

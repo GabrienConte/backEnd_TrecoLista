@@ -31,15 +31,6 @@ namespace BackEnd_TrecoLista.Domain.Model
         [ForeignKey("UsuarioId")]
         public virtual Usuario Usuario { get; set; }
 
-        public Favorito(int id, int produtoId, int usuarioId, bool aviso, int prioridade, Produto produto, Usuario usuario)
-        {
-            Id = id;
-            ProdutoId = produtoId;
-            UsuarioId = usuarioId;
-            Aviso = aviso;
-            Prioridade = prioridade;
-        }
-
         public Favorito()
         {
         }

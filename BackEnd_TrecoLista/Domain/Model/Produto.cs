@@ -42,17 +42,9 @@ namespace BackEnd_TrecoLista.Domain.Model
         [ForeignKey("PlataformaId")]
         public virtual Plataforma Plataforma { get; set; }
 
-        public Produto(int id, string descricao, string link, decimal valor, string imagemPath, int categoriaId, int plataformaId, Categoria categoria, Plataforma plataforma)
+        public Produto()
         {
-            Id = id;
-            Descricao = descricao;
-            Link = link;
-            Valor = valor;
-            ImagemPath = imagemPath;
-            CategoriaId = categoriaId;
-            PlataformaId = plataformaId;
-            Categoria = categoria;
-            Plataforma = plataforma;
+
         }
 
         public Produto(int id, string descricao, string link, decimal valor, string imagemPath, int categoriaId, int plataformaId)

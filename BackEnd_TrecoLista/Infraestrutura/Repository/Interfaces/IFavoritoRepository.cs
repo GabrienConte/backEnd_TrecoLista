@@ -4,8 +4,10 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces
 {
     public interface IFavoritoRepository
     {
-        void Add(Favorito favorito);
-
-        List<Favorito> Get();
+        Task<IEnumerable<Favorito>> GetAllAsync();
+        Task<Favorito> GetByIdAsync(int id);
+        Task<Favorito> AddAsync(Favorito favorito);
+        Task<Favorito> UpdateAsync(Favorito favorito);
+        Task<bool> DeleteAsync(int id);
     }
 }
