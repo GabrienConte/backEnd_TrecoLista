@@ -47,5 +47,10 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<IEnumerable<Favorito>> GetByUsuarioIdAsync(int usuarioId)
+        {
+            return await _context.Set<Favorito>().Where(f => f.UsuarioId == usuarioId).ToListAsync();
+        }
     }
 }

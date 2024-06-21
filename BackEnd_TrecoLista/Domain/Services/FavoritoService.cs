@@ -50,5 +50,11 @@ namespace BackEnd_TrecoLista.Domain.Services
         {
             return await _favoritoRepository.DeleteAsync(id);
         }
+
+        public async Task<IEnumerable<FavoritoDto>> GetByUsuarioIdAsync(int usuarioId)
+        {
+            var favoritos = await _favoritoRepository.GetByUsuarioIdAsync(usuarioId);
+            return _mapper.Map<IEnumerable<FavoritoDto>>(favoritos);
+        }
     }
 }

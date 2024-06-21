@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd_TrecoLista.Application.Controllers
 {
+    [ApiController]
+    [Route("api/v1/favorito")]
     public class FavoritoController : ControllerBase
     {
         private readonly IFavoritoService _favoritoService;
@@ -69,6 +71,14 @@ namespace BackEnd_TrecoLista.Application.Controllers
             var success = await _favoritoService.DeleteAsync(favorito.Id);
             if (!success) return NotFound();
             return NoContent();
+        }
+
+        [HttpGet("usuario/{usuarioId}")]
+        public async Task<ActionResult<IEnumerable<FavoritoDto>>> GetByUsuarioId(int usuarioId)
+        {
+            var favoritos = await _favoritoService.GetByUsuarioIdAsync(usuarioId);
+            if (!favoritos.Any()) return NotFound();
+            return Ok(favoritos);
         }
     }
 }

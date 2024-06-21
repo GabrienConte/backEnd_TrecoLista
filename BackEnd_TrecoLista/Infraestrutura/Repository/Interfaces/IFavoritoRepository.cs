@@ -9,5 +9,6 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces
         Task<Favorito> AddAsync(Favorito favorito);
         Task<Favorito> UpdateAsync(Favorito favorito);
         Task<bool> DeleteAsync(int id);
+        Task<IEnumerable<Favorito>> GetByUsuarioIdAsync(int usuarioId);
     }
 }
