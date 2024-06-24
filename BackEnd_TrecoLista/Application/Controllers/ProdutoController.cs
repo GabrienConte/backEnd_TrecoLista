@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BackEnd_TrecoLista.Domain.Services.Interfaces;
-using BackEnd_TrecoLista.Infraestrutura.Repository;
 using BackEnd_TrecoLista.Domain.DTOs.Produto;
 
 namespace BackEnd_TrecoLista.Application.Controllers
@@ -83,5 +82,25 @@ namespace BackEnd_TrecoLista.Application.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("/produtoScrap")]
+        public async  Task<ActionResult> GetProdutoInfoScrap([FromBody] string request)
+        {
+            if (string.IsNullOrEmpty(request))
+            {
+                return BadRequest(new { error = "URL is required" });
+            }
+
+            try
+            {
+                var productInfo = await _produtoService.GetProductInfoAsync(request);
+                return Ok(productInfo);
+            }
+            catch (HttpRequestException e)
+            {
+                return StatusCode(500, new { error = e.Message });
+            }
+
+        }
     }
 }

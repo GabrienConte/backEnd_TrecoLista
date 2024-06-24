@@ -18,13 +18,14 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddHttpClient();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => 

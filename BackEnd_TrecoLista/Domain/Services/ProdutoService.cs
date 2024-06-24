@@ -3,18 +3,29 @@ using BackEnd_TrecoLista.Domain.DTOs.Produto;
 using BackEnd_TrecoLista.Domain.Model;
 using BackEnd_TrecoLista.Domain.Services.Interfaces;
 using BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Net.Http;
+using System.Text.Json;
+using System.Text;
+using BackEnd_TrecoLista.Infraestrutura.Configurations;
+using Microsoft.Extensions.Options;
+using BackEnd_TrecoLista.Infraestrutura.Util;
 
 namespace BackEnd_TrecoLista.Domain.Services
 {
     public class ProdutoService : IProdutoService
     {
         private readonly IProdutoRepository _produtoRepository;
+        private readonly HttpClient _httpClient;
+        private readonly ApiSettings _apiSettings;
         private readonly IMapper _mapper;
 
-        public ProdutoService(IProdutoRepository produtoRepository, IMapper mapper)
+        public ProdutoService(IProdutoRepository produtoRepository, IMapper mapper, HttpClient httpClient, IOptions<ApiSettings> apiSettings)
         {
             _produtoRepository = produtoRepository;
             _mapper = mapper;
+            _httpClient = httpClient;
+            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IEnumerable<ProdutoDto>> GetAllAsync()
@@ -44,6 +55,28 @@ namespace BackEnd_TrecoLista.Domain.Services
             _mapper.Map(produtoUpdateDto, produto);
             var updatedProduto = await _produtoRepository.UpdateAsync(produto);
             return _mapper.Map<ProdutoDto>(updatedProduto);
+        }
+
+        public async Task<ProdutoScrapDTO> GetProductInfoAsync(string url)
+        {
+            var flaskApiUrl = _apiSettings.FlaskApiUrl;
+            var requestData = new { url };
+            var jsonContent = new StringContent(JsonSerializer.Serialize(requestData), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(flaskApiUrl, jsonContent);
+            response.EnsureSuccessStatusCode();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var produtoInfo = JsonSerializer.Deserialize<ProdutoScrapDTO>(jsonResponse, options);
+
+            produtoInfo.ValorConvertido = ValorConverter.ConvertPrice(produtoInfo.Valor);
+
+            return produtoInfo;
         }
 
         public async Task<bool> DeleteAsync(int id)
