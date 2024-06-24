@@ -36,7 +36,8 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository
             var categoria = await _context.Categorias.FindAsync(id);
             if (categoria != null)
             {
-                _context.Categorias.Remove(categoria);
+                categoria.Ativo = false;
+                _context.Categorias.Update(categoria);
                 await _context.SaveChangesAsync();
             }
         }
