@@ -1,4 +1,4 @@
-﻿namespace BackEnd_TrecoLista.Infraestrutura.Email
+﻿namespace BackEnd_TrecoLista.Infraestrutura.Configurations
 {
     public class EmailConfig
     {
