@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MailKit.Net.Smtp;
+using BackEnd_TrecoLista.Infraestrutura.Configurations;
 
 namespace BackEnd_TrecoLista.Infraestrutura.Email
 {
