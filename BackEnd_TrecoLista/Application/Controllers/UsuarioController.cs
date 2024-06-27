@@ -19,7 +19,7 @@ namespace BackEnd_TrecoLista.Application.Controllers
         }
 
         [Authorize]
-        [HttpGet]
+        [HttpGet("getAll")]
         public async Task<ActionResult<IEnumerable<UsuarioDto>>> GetUsuarios()
         {
             var usuarios = await _usuarioService.GetAllAsync();
@@ -27,15 +27,27 @@ namespace BackEnd_TrecoLista.Application.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UsuarioDto>> GetUsuario(int id)
+        [HttpGet]
+        public async Task<ActionResult<UsuarioDto>> GetUsuario()
         {
-            var usuario = await _usuarioService.GetByIdAsync(id);
-            if (usuario == null)
+            var userIdValue = User.FindFirst("usuario_id")?.Value;
+            if (string.IsNullOrEmpty(userIdValue)) return Unauthorized();
+
+            int userId;
+
+            bool coverteUserId = int.TryParse(userIdValue, out userId);
+
+
+            if (coverteUserId)
             {
-                return NotFound();
+                var usuario = await _usuarioService.GetByIdAsync(userId);
+                if (usuario == null)
+                {
+                    return NotFound();
+                }
+                return Ok(usuario);
             }
-            return Ok(usuario);
+            else return BadRequest();
         }
 
         [HttpPost]
@@ -46,11 +58,22 @@ namespace BackEnd_TrecoLista.Application.Controllers
         }
 
         [Authorize]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuario(int id, UsuarioUpdateDto usuarioUpdateDto)
+        [HttpPut]
+        public async Task<IActionResult> PutUsuario(UsuarioUpdateDto usuarioUpdateDto)
         {
-            await _usuarioService.UpdateAsync(id, usuarioUpdateDto);
-            return NoContent();
+            var userIdValue = User.FindFirst("usuario_id")?.Value;
+            if (string.IsNullOrEmpty(userIdValue)) return Unauthorized();
+
+            int userId;
+
+            bool coverteUserId = int.TryParse(userIdValue, out userId);
+
+            if (coverteUserId)
+            {
+                await _usuarioService.UpdateAsync(userId, usuarioUpdateDto);
+                return NoContent();
+            }
+            else return BadRequest(nameof(PostUsuario));
         }
 
         [Authorize]
