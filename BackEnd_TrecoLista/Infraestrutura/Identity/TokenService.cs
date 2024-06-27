@@ -15,7 +15,8 @@ namespace BackEnd_TrecoLista.Infraestrutura.Identity
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("usuario", usuario.Id.ToString()),
+                    new Claim("usuario_id", usuario.Id.ToString()),
+                    new Claim("tipo_usuario", usuario.TipoUsuario)
                 }),
                 Expires = DateTime.UtcNow.AddHours(3),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BackEnd_TrecoLista.Domain.Services.Interfaces;
 using BackEnd_TrecoLista.Domain.DTOs.Produto;
+using System.Security.Claims;
 
 namespace BackEnd_TrecoLista.Application.Controllers
 {
@@ -10,10 +11,12 @@ namespace BackEnd_TrecoLista.Application.Controllers
     public class ProdutoController : ControllerBase
     {
         private readonly IProdutoService _produtoService;
+        private readonly IFavoritoService _favoritoService;
 
-        public ProdutoController(IProdutoService produtoService)
+        public ProdutoController(IProdutoService produtoService, IFavoritoService favoritoService)
         {
             _produtoService = produtoService;
+            _favoritoService = favoritoService; 
         }
 
         [HttpGet]
@@ -101,6 +104,63 @@ namespace BackEnd_TrecoLista.Application.Controllers
                 return StatusCode(500, new { error = e.Message });
             }
 
+        }
+
+        [Authorize]
+        [HttpGet("produtosFavoritados")]
+        public async Task<ActionResult<IEnumerable<ProdutoCardDTO>>> GetProdutosFavoritadosCards()
+        {
+            var userId = User.FindFirst("usuario_id")?.Value;
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var favoritos = await _favoritoService.GetByUsuarioIdAsync(int.Parse(userId));
+            if (!favoritos.Any()) return NotFound();
+
+            var produtosDetalhes = new List<ProdutoCardDTO>();
+
+            foreach (var favorito in favoritos)
+            {
+                var produto = await _produtoService.GetByIdAsync(favorito.ProdutoId);
+                if (produto != null)
+                {
+                    produtosDetalhes.Add(new ProdutoCardDTO
+                    {
+                        ProdutoId = produto.Id,
+                        Descricao = produto.Descricao,
+                        Valor = produto.Valor,
+                        ImagemPath = produto.ImagemPath,
+                        IsFavoritado = true
+                    });
+                }
+            }
+
+            return Ok(produtosDetalhes);
+        }
+
+        [Authorize]
+        [HttpGet("produtosNaoFavoritados")]
+        public async Task<ActionResult<IEnumerable<ProdutoCardDTO>>> GetProdutosNaoFavoritadosCards()
+        {
+            var userId = User.FindFirst("usuario_id")?.Value;
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var favoritos = await _favoritoService.GetByUsuarioIdAsync(int.Parse(userId));
+            var favoritosProdutoIds = favoritos.Select(f => f.ProdutoId).ToList();
+
+            var todosProdutos = await _produtoService.GetAllAsync();
+            var produtosNaoFavoritados = todosProdutos
+                .Where(p => !favoritosProdutoIds.Contains(p.Id))
+                .Select(p => new ProdutoCardDTO
+                {
+                    ProdutoId = p.Id,
+                    Descricao = p.Descricao,
+                    Valor = p.Valor,
+                    ImagemPath = p.ImagemPath,
+                    IsFavoritado = false
+                })
+                .ToList();
+
+            return Ok(produtosNaoFavoritados);
         }
     }
 }
