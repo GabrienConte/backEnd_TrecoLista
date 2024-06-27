@@ -23,8 +23,8 @@ namespace BackEnd_TrecoLista.Application.Controllers
 
             if (usuario != null)
             {
-                var token = TokenService.GenerateToken(usuario);
-                return Ok(token);
+                var token_access = TokenService.GenerateToken(usuario);
+                return Ok(token_access);
             }
             else
             {

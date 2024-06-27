@@ -28,7 +28,7 @@ namespace BackEnd_TrecoLista.Infraestrutura.Identity
 
             return new
             {
-                token = tokenString,
+                access_token = tokenString,
             };
         }
     }
