@@ -107,14 +107,14 @@ namespace BackEnd_TrecoLista.Application.Controllers
         }
 
         [Authorize]
-        [HttpGet("produtosFavoritados")]
+        [HttpGet("Favoritados")]
         public async Task<ActionResult<IEnumerable<ProdutoCardDTO>>> GetProdutosFavoritadosCards()
         {
             var userId = User.FindFirst("usuario_id")?.Value;
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
             var favoritos = await _favoritoService.GetByUsuarioIdAsync(int.Parse(userId));
-            if (!favoritos.Any()) return NotFound();
+            if (!favoritos.Any()) return NoContent();
 
             var produtosDetalhes = new List<ProdutoCardDTO>();
 
@@ -126,6 +126,7 @@ namespace BackEnd_TrecoLista.Application.Controllers
                     produtosDetalhes.Add(new ProdutoCardDTO
                     {
                         ProdutoId = produto.Id,
+                        Link = produto.Link,
                         Descricao = produto.Descricao,
                         Valor = produto.Valor,
                         ImagemPath = produto.ImagemPath,
@@ -138,7 +139,7 @@ namespace BackEnd_TrecoLista.Application.Controllers
         }
 
         [Authorize]
-        [HttpGet("produtosNaoFavoritados")]
+        [HttpGet("NaoFavoritados")]
         public async Task<ActionResult<IEnumerable<ProdutoCardDTO>>> GetProdutosNaoFavoritadosCards()
         {
             var userId = User.FindFirst("usuario_id")?.Value;
@@ -153,6 +154,7 @@ namespace BackEnd_TrecoLista.Application.Controllers
                 .Select(p => new ProdutoCardDTO
                 {
                     ProdutoId = p.Id,
+                    Link = p.Link,
                     Descricao = p.Descricao,
                     Valor = p.Valor,
                     ImagemPath = p.ImagemPath,
