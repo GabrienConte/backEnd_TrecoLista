@@ -50,6 +50,30 @@ namespace BackEnd_TrecoLista.Application.Controllers
             else return BadRequest();
         }
 
+        [Authorize]
+        [HttpGet("update")]
+        public async Task<ActionResult<UsuarioUpdateDto>> GetUsuarioUpdate()
+        {
+            var userIdValue = User.FindFirst("usuario_id")?.Value;
+            if (string.IsNullOrEmpty(userIdValue)) return Unauthorized();
+
+            int userId;
+
+            bool coverteUserId = int.TryParse(userIdValue, out userId);
+
+
+            if (coverteUserId)
+            {
+                var usuario = await _usuarioService.GetByIdAsync(userId);
+                if (usuario == null)
+                {
+                    return NotFound();
+                }
+                return Ok(usuario);
+            }
+            else return BadRequest();
+        }
+
         [HttpPost]
         public async Task<ActionResult<UsuarioDto>> PostUsuario(UsuarioCreateDto usuarioCreateDto)
         {
