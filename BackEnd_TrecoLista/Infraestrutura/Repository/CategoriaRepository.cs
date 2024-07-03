@@ -13,6 +13,11 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository
             return await _context.Categorias.ToListAsync();
         }
 
+        public async Task<IEnumerable<Categoria>> GetAtivasAsync()
+        {
+            return await _context.Categorias.Where(c => c.Ativo).ToListAsync();
+        }
+
         public async Task<Categoria> GetByIdAsync(int id)
         {
             return await _context.Categorias.FindAsync(id);

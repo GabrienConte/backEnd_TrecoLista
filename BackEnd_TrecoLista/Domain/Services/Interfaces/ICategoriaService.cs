@@ -6,6 +6,7 @@ namespace BackEnd_TrecoLista.Domain.Services.Interfaces
     public interface ICategoriaService
     {
         Task<IEnumerable<CategoriaDto>> GetAllAsync();
+        Task<IEnumerable<CategoriaDto>> GetAtivasAsync();
         Task<CategoriaDto> GetByIdAsync(int id);
         Task<CategoriaDto> AddAsync(CategoriaCreateDto categoriaCreateDto);
         Task UpdateAsync(int id, CategoriaUpdateDto categoriaUpdateDto);

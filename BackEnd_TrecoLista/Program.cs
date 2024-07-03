@@ -14,6 +14,7 @@ using BackEnd_TrecoLista.Infraestrutura.Email;
 using MailKit;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -124,6 +125,13 @@ app.UseCors(AllowAllOrigins);
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+                Path.Combine(app.Environment.ContentRootPath, "storage")),
+    RequestPath = "/storage"
+});
 
 app.MapControllers();
 

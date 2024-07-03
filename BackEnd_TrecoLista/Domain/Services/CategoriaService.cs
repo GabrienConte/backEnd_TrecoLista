@@ -23,6 +23,12 @@ namespace BackEnd_TrecoLista.Domain.Services
             return _mapper.Map<IEnumerable<CategoriaDto>>(categorias);
         }
 
+        public async Task<IEnumerable<CategoriaDto>> GetAtivasAsync()
+        {
+            var categorias = await _categoriaRepository.GetAtivasAsync();
+            return _mapper.Map<IEnumerable<CategoriaDto>>(categorias);
+        }
+
         public async Task<CategoriaDto> GetByIdAsync(int id)
         {
             var categoria = await _categoriaRepository.GetByIdAsync(id);

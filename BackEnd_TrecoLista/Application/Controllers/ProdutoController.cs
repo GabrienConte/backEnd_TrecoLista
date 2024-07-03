@@ -19,12 +19,12 @@ namespace BackEnd_TrecoLista.Application.Controllers
             _favoritoService = favoritoService; 
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetAll()
-        {
-            var produtos = await _produtoService.GetAllAsync();
-            return Ok(produtos);
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetAll()
+        //{
+        //    var produtos = await _produtoService.GetAllAsync();
+        //    return Ok(produtos);
+        //}
 
         [Authorize]
         [HttpGet("{id}")]
@@ -52,14 +52,14 @@ namespace BackEnd_TrecoLista.Application.Controllers
             return Ok(produto);
         }
 
-        [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
-        {
-            var success = await _produtoService.DeleteAsync(id);
-            if (!success) return NotFound();
-            return NoContent();
-        }
+        //[Authorize]
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult> Delete(int id)
+        //{
+        //    var success = await _produtoService.DeleteAsync(id);
+        //    if (!success) return NotFound();
+        //    return NoContent();
+        //}
 
 
         [Authorize]
@@ -86,17 +86,17 @@ namespace BackEnd_TrecoLista.Application.Controllers
         }
 
         [HttpPost]
-        [Route("/produtoScrap")]
-        public async  Task<ActionResult> GetProdutoInfoScrap([FromBody] string request)
+        [Route("produtoScrap")]
+        public async Task<ActionResult> GetProdutoInfoScrap([FromBody] GetProdutoScrapRequest request)
         {
-            if (string.IsNullOrEmpty(request))
+            if (string.IsNullOrEmpty(request.link))
             {
                 return BadRequest(new { error = "URL is required" });
             }
 
             try
             {
-                var productInfo = await _produtoService.GetProductInfoAsync(request);
+                var productInfo = await _produtoService.GetProductInfoAsync(request.link);
                 return Ok(productInfo);
             }
             catch (HttpRequestException e)

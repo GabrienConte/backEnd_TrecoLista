@@ -10,6 +10,7 @@ using System.Text;
 using BackEnd_TrecoLista.Infraestrutura.Configurations;
 using Microsoft.Extensions.Options;
 using BackEnd_TrecoLista.Infraestrutura.Util;
+using System.Text.RegularExpressions;
 
 namespace BackEnd_TrecoLista.Domain.Services
 {
@@ -74,6 +75,16 @@ namespace BackEnd_TrecoLista.Domain.Services
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var produtoInfo = JsonSerializer.Deserialize<ProdutoScrapDTO>(jsonResponse, options);
 
+            string fileName = Path.GetFileName(Regex.Replace(produtoInfo.Descricao, @"\s", "") + Path.GetExtension(produtoInfo.ImagemPath));
+            var storagePath = Path.Combine("storage", fileName);
+            if (!File.Exists(storagePath))
+            {
+                await DownloadImagemAsync(produtoInfo.ImagemPath, storagePath);
+            }
+
+            // Atualizando o caminho da imagem
+            produtoInfo.ImagemPath = fileName;
+
             produtoInfo.ValorConvertido = ValorConverter.ConvertPrice(produtoInfo.Valor);
 
             return produtoInfo;
@@ -82,6 +93,16 @@ namespace BackEnd_TrecoLista.Domain.Services
         public async Task<bool> DeleteAsync(int id)
         {
             return await _produtoRepository.DeleteAsync(id);
+        }
+
+        private async Task DownloadImagemAsync(string imageUrl, string storagePath)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
+                Directory.CreateDirectory(Path.GetDirectoryName(storagePath));
+                await File.WriteAllBytesAsync(storagePath, imageBytes);
+            }
         }
     }
 }

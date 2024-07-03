@@ -18,13 +18,13 @@ namespace BackEnd_TrecoLista.Application.Controllers
             _usuarioService = usuarioService;
         }
 
-        [Authorize]
-        [HttpGet("getAll")]
-        public async Task<ActionResult<IEnumerable<UsuarioDto>>> GetUsuarios()
-        {
-            var usuarios = await _usuarioService.GetAllAsync();
-            return Ok(usuarios);
-        }
+        //[Authorize]
+        //[HttpGet("getAll")]
+        //public async Task<ActionResult<IEnumerable<UsuarioDto>>> GetUsuarios()
+        //{
+        //    var usuarios = await _usuarioService.GetAllAsync();
+        //    return Ok(usuarios);
+        //}
 
         [Authorize]
         [HttpGet]
@@ -100,12 +100,12 @@ namespace BackEnd_TrecoLista.Application.Controllers
             else return BadRequest(nameof(PostUsuario));
         }
 
-        [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuario(int id)
-        {
-            await _usuarioService.DeleteAsync(id);
-            return NoContent();
-        }
+        //[Authorize]
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteUsuario(int id)
+        //{
+        //    await _usuarioService.DeleteAsync(id);
+        //    return NoContent();
+        //}
     }
 }
