@@ -30,16 +30,35 @@ namespace BackEnd_TrecoLista.Application.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProdutoDto>> GetById(int id)
         {
-            var produto = await _produtoService.GetByIdAsync(id);
+            var produto = await _produtoService.GetProdutoByIdAsync(id);
             if (produto == null) return NotFound();
             return Ok(produto);
         }
 
         [Authorize]
-        [HttpPost]
-        public async Task<ActionResult<ProdutoDto>> Create(ProdutoCreateDto produtoCreateDto)
+        [HttpGet("{produtoId}/favoritado")]
+        public async Task<ActionResult<ProdutoFavoritadoDTO>> GetProdutoDetalhadoByUserAndProduto(int produtoId)
         {
-            var produto = await _produtoService.AddAsync(produtoCreateDto);
+            var userId = User.FindFirst("usuario_id")?.Value;
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var produto = await _produtoService.GetProdutoFavoritadoByUserAndProdutoAsync(int.Parse(userId), produtoId);
+            if (produto == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(produto);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult<ProdutoDto>> Create([FromForm] ProdutoCreateDto produtoCreateDto)
+        {
+            var userId = User.FindFirst("usuario_id")?.Value;
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var produto = await _produtoService.AddAsync(produtoCreateDto, int.Parse(userId));
             return CreatedAtAction(nameof(GetById), new { id = produto.Id }, produto);
         }
 
@@ -67,7 +86,7 @@ namespace BackEnd_TrecoLista.Application.Controllers
         [Route("{id}/download")]
         public async Task<ActionResult> DownloadFoto(int id)
         {
-            var produto = await _produtoService.GetByIdAsync(id);
+            var produto = await _produtoService.GetProdutoByIdAsync(id);
 
             if (produto == null || string.IsNullOrEmpty(produto.ImagemPath))
             {
@@ -120,7 +139,7 @@ namespace BackEnd_TrecoLista.Application.Controllers
 
             foreach (var favorito in favoritos)
             {
-                var produto = await _produtoService.GetByIdAsync(favorito.ProdutoId);
+                var produto = await _produtoService.GetProdutoByIdAsync(favorito.ProdutoId);
                 if (produto != null)
                 {
                     produtosDetalhes.Add(new ProdutoCardDTO

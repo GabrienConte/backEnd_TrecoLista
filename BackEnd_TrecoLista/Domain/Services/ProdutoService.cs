@@ -11,19 +11,23 @@ using BackEnd_TrecoLista.Infraestrutura.Configurations;
 using Microsoft.Extensions.Options;
 using BackEnd_TrecoLista.Infraestrutura.Util;
 using System.Text.RegularExpressions;
+using BackEnd_TrecoLista.Domain.DTOs.Favorito;
+using BackEnd_TrecoLista.Infraestrutura.Repository;
 
 namespace BackEnd_TrecoLista.Domain.Services
 {
     public class ProdutoService : IProdutoService
     {
         private readonly IProdutoRepository _produtoRepository;
+        private readonly IFavoritoService _favoritoService;
         private readonly HttpClient _httpClient;
         private readonly ApiSettings _apiSettings;
         private readonly IMapper _mapper;
 
-        public ProdutoService(IProdutoRepository produtoRepository, IMapper mapper, HttpClient httpClient, IOptions<ApiSettings> apiSettings)
+        public ProdutoService(IProdutoRepository produtoRepository, IFavoritoService favoritoService, IMapper mapper, HttpClient httpClient, IOptions<ApiSettings> apiSettings)
         {
             _produtoRepository = produtoRepository;
+            _favoritoService = favoritoService;
             _mapper = mapper;
             _httpClient = httpClient;
             _apiSettings = apiSettings.Value;
@@ -35,16 +39,56 @@ namespace BackEnd_TrecoLista.Domain.Services
             return _mapper.Map<IEnumerable<ProdutoDto>>(produtos);
         }
 
-        public async Task<ProdutoDto> GetByIdAsync(int id)
+        public async Task<ProdutoDto> GetProdutoByIdAsync(int id)
         {
             var produto = await _produtoRepository.GetByIdAsync(id);
             return _mapper.Map<ProdutoDto>(produto);
         }
 
-        public async Task<ProdutoDto> AddAsync(ProdutoCreateDto produtoCreateDto)
+        public async Task<ProdutoFavoritadoDTO> GetProdutoFavoritadoByUserAndProdutoAsync(int userId, int produtoId)
+        {
+            var produto = await _produtoRepository.GetByIdAsync(produtoId);
+            var produtoDetalhadoDto = _mapper.Map<ProdutoFavoritadoDTO>(produto);
+
+            var favorito = await _favoritoService.GetFavoritoByUserIdAndProdutoIdAsync(userId, produtoId);
+            if (favorito != null)
+            {
+                produtoDetalhadoDto.Prioridade = favorito.Prioridade;
+                produtoDetalhadoDto.Aviso = favorito.Aviso;
+            }
+
+            return produtoDetalhadoDto;
+        }
+
+        public async Task<ProdutoDto> AddAsync(ProdutoCreateDto produtoCreateDto, int userId)
         {
             var produto = _mapper.Map<Produto>(produtoCreateDto);
+
+            if (produtoCreateDto.Imagem != null)
+            {
+                string fileName = Path.GetFileName(Regex.Replace(produtoCreateDto.Descricao.Substring(0, 20), @"\s", "") + Path.GetExtension(produtoCreateDto.ImagemPath));
+                var storagePath = Path.Combine("storage", fileName);
+
+                if (!File.Exists(storagePath))
+                {
+                    await DownloadImagemAsync(produtoCreateDto.ImagemPath, storagePath);
+                }
+
+                produtoCreateDto.ImagemPath = fileName;
+            }
+
             var newProduto = await _produtoRepository.AddAsync(produto);
+
+            var createFavorito = new FavoritoCreateDto
+            {
+                ProdutoId = newProduto.Id,
+                UsuarioId = userId,
+                Prioridade = produtoCreateDto.Prioridade,
+                Aviso = produtoCreateDto.IsAvisado
+            };
+
+            var favorito = await _favoritoService.AddAsync(createFavorito);
+
             return _mapper.Map<ProdutoDto>(newProduto);
         }
 
@@ -74,16 +118,6 @@ namespace BackEnd_TrecoLista.Domain.Services
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var produtoInfo = JsonSerializer.Deserialize<ProdutoScrapDTO>(jsonResponse, options);
-
-            string fileName = Path.GetFileName(Regex.Replace(produtoInfo.Descricao, @"\s", "") + Path.GetExtension(produtoInfo.ImagemPath));
-            var storagePath = Path.Combine("storage", fileName);
-            if (!File.Exists(storagePath))
-            {
-                await DownloadImagemAsync(produtoInfo.ImagemPath, storagePath);
-            }
-
-            // Atualizando o caminho da imagem
-            produtoInfo.ImagemPath = fileName;
 
             produtoInfo.ValorConvertido = ValorConverter.ConvertPrice(produtoInfo.Valor);
 

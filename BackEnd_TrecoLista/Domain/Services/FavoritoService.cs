@@ -29,6 +29,12 @@ namespace BackEnd_TrecoLista.Domain.Services
             return _mapper.Map<FavoritoDto>(favorito);
         }
 
+        public async Task<FavoritoDto> GetFavoritoByUserIdAndProdutoIdAsync(int userId, int produtoId)
+        {
+            var favorito = await _favoritoRepository.GetByUserIdAndProdutoIdAsync(userId, produtoId);
+            return _mapper.Map<FavoritoDto>(favorito);
+        }
+
         public async Task<FavoritoDto> AddAsync(FavoritoCreateDto favoritoCreateDto)
         {
             var favorito = _mapper.Map<Favorito>(favoritoCreateDto);

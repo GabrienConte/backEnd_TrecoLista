@@ -6,21 +6,27 @@ namespace BackEnd_TrecoLista.Domain.DTOs.Produto
     {
         [Required]
         [StringLength(255)]
-        public string Descricao { get; set; }
-
-        [StringLength(255)]
         public string Link { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        public string Descricao { get; set; }
 
         [Required]
         public decimal Valor { get; set; }
 
-        [StringLength(255)]
         public string ImagemPath { get; set; }
+
+        public IFormFile? Imagem { get; set; }
 
         [Required]
         public int CategoriaId { get; set; }
 
         [Required]
         public int PlataformaId { get; set; }
+
+        public int Prioridade { get; set; }
+
+        public bool IsAvisado {  get; set; }
     }
 }

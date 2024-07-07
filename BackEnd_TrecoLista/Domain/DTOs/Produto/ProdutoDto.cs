@@ -9,7 +9,5 @@
         public string ImagemPath { get; set; }
         public int CategoriaId { get; set; }
         public int PlataformaId { get; set; }
-        public string CategoriaDescricao { get; set; }
-        public string PlataformaDescricao { get; set; }
     }
 }

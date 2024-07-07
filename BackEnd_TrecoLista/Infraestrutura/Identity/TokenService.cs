@@ -8,7 +8,7 @@ namespace BackEnd_TrecoLista.Infraestrutura.Identity
 {
     public class TokenService
     {
-        public static object GenerateToken(Usuario usuario)
+        public static string GenerateToken(Usuario usuario)
         {
             var key = Encoding.ASCII.GetBytes(Key.Secret);
             var tokenConfig = new SecurityTokenDescriptor
@@ -18,18 +18,13 @@ namespace BackEnd_TrecoLista.Infraestrutura.Identity
                     new Claim("usuario_id", usuario.Id.ToString()),
                     new Claim("tipo_usuario", usuario.TipoUsuario)
                 }),
-                Expires = DateTime.UtcNow.AddHours(3),
+                Expires = DateTime.UtcNow.AddYears(3),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenConfig);
-            var tokenString = tokenHandler.WriteToken(token);
-
-            return new
-            {
-                access_token = tokenString,
-            };
+            return tokenHandler.WriteToken(token);
         }
     }
 }

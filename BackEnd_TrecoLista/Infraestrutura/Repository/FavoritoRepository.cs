@@ -24,6 +24,11 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository
                 .FirstOrDefaultAsync(f => f.Id == id);
         }
 
+        public async Task<Favorito> GetByUserIdAndProdutoIdAsync(int userId, int produtoId)
+        {
+            return await _context.Favoritos.FirstOrDefaultAsync(f => f.ProdutoId == produtoId && f.UsuarioId == userId);
+        }
+
         public async Task<Favorito> AddAsync(Favorito favorito)
         {
             var entity = await _context.Set<Favorito>().AddAsync(favorito);

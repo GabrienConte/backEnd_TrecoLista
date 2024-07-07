@@ -25,9 +25,8 @@ namespace BackEnd_TrecoLista.Infraestrutura.Configurations
             CreateMap<UsuarioUpdateDto, Usuario>();
             CreateMap<UsuarioLoginDto, Usuario>();
 
-            CreateMap<Produto, ProdutoDto>()
-           .ForMember(dest => dest.CategoriaDescricao, opt => opt.MapFrom(src => src.Categoria.Descricao))
-           .ForMember(dest => dest.PlataformaDescricao, opt => opt.MapFrom(src => src.Plataforma.Descricao));
+            CreateMap<Produto, ProdutoDto>();
+            CreateMap<Produto, ProdutoFavoritadoDTO>();
             CreateMap<ProdutoCreateDto, Produto>();
             CreateMap<ProdutoUpdateDto, Produto>();
 
