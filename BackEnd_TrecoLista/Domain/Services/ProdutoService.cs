@@ -13,6 +13,7 @@ using BackEnd_TrecoLista.Infraestrutura.Util;
 using System.Text.RegularExpressions;
 using BackEnd_TrecoLista.Domain.DTOs.Favorito;
 using BackEnd_TrecoLista.Infraestrutura.Repository;
+using BackEnd_TrecoLista.Infraestrutura.Email;
 
 namespace BackEnd_TrecoLista.Domain.Services
 {
@@ -20,17 +21,23 @@ namespace BackEnd_TrecoLista.Domain.Services
     {
         private readonly IProdutoRepository _produtoRepository;
         private readonly IFavoritoService _favoritoService;
+        private readonly IEmailService _emailService;
+        private readonly IDispositivoTokenService _dispositivoService;
         private readonly HttpClient _httpClient;
-        private readonly ApiSettings _apiSettings;
+        private readonly FlaskApiSettings _flaskApiSettings;
         private readonly IMapper _mapper;
 
-        public ProdutoService(IProdutoRepository produtoRepository, IFavoritoService favoritoService, IMapper mapper, HttpClient httpClient, IOptions<ApiSettings> apiSettings)
+        public ProdutoService(IProdutoRepository produtoRepository, IFavoritoService favoritoService, 
+            IEmailService emailService, IMapper mapper, IDispositivoTokenService dispositivoService,
+            HttpClient httpClient, IOptions<FlaskApiSettings> flaskApiSettings)
         {
             _produtoRepository = produtoRepository;
             _favoritoService = favoritoService;
+            _emailService = emailService;
+            _dispositivoService = dispositivoService;
             _mapper = mapper;
             _httpClient = httpClient;
-            _apiSettings = apiSettings.Value;
+            _flaskApiSettings = flaskApiSettings.Value;
         }
 
         public async Task<IEnumerable<ProdutoDto>> GetAllAsync()
@@ -92,23 +99,45 @@ namespace BackEnd_TrecoLista.Domain.Services
             return _mapper.Map<ProdutoDto>(newProduto);
         }
 
-        public async Task<ProdutoDto> UpdateAsync(int id, ProdutoUpdateDto produtoUpdateDto)
+        public async Task<ProdutoDto> UpdateAsync(int id, ProdutoUpdateDto produtoUpdateDto, int userId)
         {
             var produto = await _produtoRepository.GetByIdAsync(id);
-            if (produto == null) return null;
+            if (produto == null)
+            {
+                return null; // ou lançar exceção conforme sua lógica de tratamento de erros
+            }
 
-            _mapper.Map(produtoUpdateDto, produto);
-            var updatedProduto = await _produtoRepository.UpdateAsync(produto);
-            return _mapper.Map<ProdutoDto>(updatedProduto);
+            // Atualiza os campos do produto com base no DTO recebido
+            produto.CategoriaId = produtoUpdateDto.CategoriaId;
+            produto.PlataformaId = produtoUpdateDto.PlataformaId;
+
+            // Atualiza os campos do favorito relacionado, se existir
+            var favorito = await _favoritoService.GetFavoritoByUserIdAndProdutoIdAsync(userId, id);
+            if (favorito != null)
+            {
+                var favoritoUpdateDTO = new FavoritoUpdateDto{
+                    ProdutoId = favorito.ProdutoId,
+                    UsuarioId = favorito.UsuarioId,
+                    Aviso = produtoUpdateDto.IsAvisado,
+                    Prioridade = produtoUpdateDto.Prioridade,
+                };
+  
+                await _favoritoService.UpdateAsync(favorito.Id, favoritoUpdateDTO);
+            }
+
+            // Salva as alterações no produto
+            await _produtoRepository.UpdateAsync(produto);
+
+            return _mapper.Map<ProdutoDto>(produto);
         }
 
         public async Task<ProdutoScrapDTO> GetProductInfoAsync(string url)
         {
-            var flaskApiUrl = _apiSettings.FlaskApiUrl;
+            var produtoScrapeURL = _flaskApiSettings.ProdutoScrape;
             var requestData = new { url };
             var jsonContent = new StringContent(JsonSerializer.Serialize(requestData), Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync(flaskApiUrl, jsonContent);
+            var response = await _httpClient.PostAsync(produtoScrapeURL, jsonContent);
             response.EnsureSuccessStatusCode();
 
             var options = new JsonSerializerOptions
@@ -122,6 +151,53 @@ namespace BackEnd_TrecoLista.Domain.Services
             produtoInfo.ValorConvertido = ValorConverter.ConvertPrice(produtoInfo.Valor);
 
             return produtoInfo;
+        }
+
+        public async Task VerificarAtualizarPrecosFavoritosAsync()
+        {
+            var favoritos = await _favoritoService.GetAllAsync();
+            var produtosFavoritos = favoritos.Select(f => new { f.ProdutoId, f.ProdutoLink }).ToList();
+
+            var produtosScrapeURL = _flaskApiSettings.ProdutosScrape ;
+            var requestData = new { produtos = produtosFavoritos };
+            var jsonContent = new StringContent(JsonSerializer.Serialize(requestData), Encoding.UTF8, "application/json");
+
+ 
+            var response = await _httpClient.PostAsync(produtosScrapeURL, jsonContent);
+            response.EnsureSuccessStatusCode();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var produtosInfo = JsonSerializer.Deserialize<List<ProdutosScrapResultDTO>>(jsonResponse, options);
+
+            foreach (var produtoInfo in produtosInfo)
+            {
+                var produto = await _produtoRepository.GetByIdAsync(produtoInfo.Id);
+                if (produto != null)
+                {
+                    var valorConvertido = ValorConverter.ConvertPrice(produtoInfo.Valor);
+                    if (produto.Valor != valorConvertido)
+                    {
+                        var valorAntigo = produto.Valor;
+                        produto.Valor = valorConvertido;
+                        await _produtoRepository.UpdateAsync(produto);
+
+                        var favoritosParaAvisar = favoritos.Where(f => f.ProdutoId == produto.Id && f.Aviso).ToList();
+                        foreach (var favorito in favoritosParaAvisar)
+                        {
+                            await _emailService.EnviarMudancaPrecoEmailAsync(produto.Id, favorito.UsuarioId, 
+                                    favorito.UsuarioEmail, produto.Descricao, produto.Valor, valorAntigo, produto.Link);
+
+                            await _dispositivoService.EnviarNotificacaoMudouPrecoToUserAsync(favorito.UsuarioId, produto.Descricao
+                                    , produto.Valor, valorAntigo);
+                        }
+                    }
+                }
+            }
         }
 
         public async Task<bool> DeleteAsync(int id)

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BackEnd_TrecoLista.Domain.DTOs.Categoria;
+using BackEnd_TrecoLista.Domain.DTOs.DispositivoToken;
 using BackEnd_TrecoLista.Domain.DTOs.Favorito;
 using BackEnd_TrecoLista.Domain.DTOs.Plataforma;
 using BackEnd_TrecoLista.Domain.DTOs.Produto;
@@ -32,9 +33,15 @@ namespace BackEnd_TrecoLista.Infraestrutura.Configurations
 
             CreateMap<Favorito, FavoritoDto>()
             .ForMember(dest => dest.ProdutoDescricao, opt => opt.MapFrom(src => src.Produto.Descricao))
-            .ForMember(dest => dest.UsuarioNome, opt => opt.MapFrom(src => src.Usuario.Login));
+            .ForMember(dest => dest.ProdutoLink, opt => opt.MapFrom(src => src.Produto.Link))
+            .ForMember(dest => dest.UsuarioNome, opt => opt.MapFrom(src => src.Usuario.Login))
+            .ForMember(dest => dest.UsuarioEmail, opt => opt.MapFrom(src => src.Usuario.Email));
             CreateMap<FavoritoCreateDto, Favorito>();
             CreateMap<FavoritoUpdateDto, Favorito>();
+
+            CreateMap<DispositivoToken, DispositivoTokenDto>();
+            CreateMap<DispositivoTokenDto, DispositivoToken>();
+            CreateMap<DispositivoTokenCreateDto, DispositivoToken>();
         }
     }
 }

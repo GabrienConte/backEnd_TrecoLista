@@ -81,7 +81,7 @@ namespace BackEnd_TrecoLista.Application.Controllers
                     ProdutoId = fav.ProdutoId,
                     UsuarioId = usuario.Id,
                     Aviso = false,
-                    Prioridade = 0,
+                    Prioridade = 1,
                 };
                 var favorito = await _favoritoService.AddAsync(createFavorito);
                 return NoContent();

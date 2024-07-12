@@ -4,8 +4,8 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces
 {
     public interface IHistoricoEmailRepository
     {
-        void Add(HistoricoEmail historicoEmail);
+        Task AddAsync(HistoricoEmail historicoEmail);
 
-        List<HistoricoEmail> Get();
+        Task<IEnumerable<HistoricoEmail>> GetAllAsync();
     }
 }

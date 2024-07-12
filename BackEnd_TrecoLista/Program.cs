@@ -15,6 +15,7 @@ using MailKit;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using BackEnd_TrecoLista.Infraestrutura.FCM;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,7 @@ builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("MailSettings"));
-builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+builder.Services.Configure<FlaskApiSettings>(builder.Configuration.GetSection("FlaskApiSettings"));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => 
@@ -68,28 +69,31 @@ builder.Services.AddTransient<ICategoriaService, CategoriaService>();
 builder.Services.AddTransient<IPlataformaRepository, PlataformaRepository>();
 builder.Services.AddTransient<IPlataformaService, PlataformaService>();
 
-builder.Services.AddTransient<IProdutoRepository, ProdutoRepository>();
-builder.Services.AddTransient<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 builder.Services.AddScoped<IFavoritoRepository, FavoritoRepository>();
 builder.Services.AddScoped<IFavoritoService, FavoritoService>();
 
+builder.Services.AddTransient<IHistoricoEmailRepository, HistoricoEmailRepository>();
 builder.Services.AddTransient<IEmailService, EmailService>();
-//builder.Services.AddTransient<IHistoricoEmailRepository, HistoricoEmailRepository>();
+
+builder.Services.AddTransient<IDispositivoTokenRepository, DispositivoTokenRepository>();
+builder.Services.AddTransient<IDispositivoTokenService, DispositivoTokenService>();
+
+builder.Services.AddTransient<IFCMService, FCMService>();
 
 var AllowAllOrigins = "_AllowAllOrigins";
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: AllowAllOrigins,
-            policy =>
+            builder =>
             {
-                policy.WithOrigins("http://localhost:4200/")
-                                    .AllowAnyHeader()
-                                    .AllowAnyMethod()
-                                    .AllowAnyOrigin();
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
             });
-
 });
 
 var key = Encoding.ASCII.GetBytes(Key.Secret);

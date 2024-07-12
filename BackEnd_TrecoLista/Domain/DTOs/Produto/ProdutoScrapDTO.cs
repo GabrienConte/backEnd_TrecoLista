@@ -10,7 +10,7 @@ namespace BackEnd_TrecoLista.Domain.DTOs.Produto
         [JsonPropertyName("valor")]
         public string Valor { get; set; }
 
-        public double ValorConvertido { get; set; }
+        public decimal ValorConvertido { get; set; }
 
         [JsonPropertyName("imagemPath")]
         public string ImagemPath { get; set; }

@@ -66,7 +66,10 @@ namespace BackEnd_TrecoLista.Application.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ProdutoDto>> Update(int id, ProdutoUpdateDto produtoUpdateDto)
         {
-            var produto = await _produtoService.UpdateAsync(id, produtoUpdateDto);
+            var userId = User.FindFirst("usuario_id")?.Value;
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var produto = await _produtoService.UpdateAsync(id, produtoUpdateDto, int.Parse(userId));
             if (produto == null) return NotFound();
             return Ok(produto);
         }
@@ -123,6 +126,14 @@ namespace BackEnd_TrecoLista.Application.Controllers
                 return StatusCode(500, new { error = e.Message });
             }
 
+        }
+
+        [HttpPost]
+        [Route("atualizarPrecosFavoritos")]
+        public async Task<IActionResult> AtualizarPrecosFavoritos()
+        {
+            await _produtoService.VerificarAtualizarPrecosFavoritosAsync();
+            return Ok("Atualização de preços dos produtos favoritados concluída.");
         }
 
         [Authorize]

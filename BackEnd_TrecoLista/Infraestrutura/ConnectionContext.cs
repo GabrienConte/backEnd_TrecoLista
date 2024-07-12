@@ -11,6 +11,7 @@ namespace BackEnd_TrecoLista.Infraestrutura
         public DbSet<Produto> Produtos { get; set; }
         public DbSet<HistoricoEmail> HistoricoEmails { get; set; }
         public DbSet<Favorito> Favoritos { get; set; }
+        public DbSet<DispositivoToken> DispositivoTokens { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql(

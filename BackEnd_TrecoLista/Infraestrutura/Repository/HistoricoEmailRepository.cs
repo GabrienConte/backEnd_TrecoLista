@@ -9,19 +9,18 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository
     {
         private readonly ConnectionContext _context = new ConnectionContext();
 
-        public void Add(HistoricoEmail historicoEmail)
+        public async Task AddAsync(HistoricoEmail historicoEmail)
         {
-            //_context.HistoricoEmails.Add(historicoEmail);
-            //_context.SaveChanges();
+            var entity = await _context.HistoricoEmails.AddAsync(historicoEmail);
+            await _context.SaveChangesAsync();
         }
 
-        public List<HistoricoEmail> Get()
+        public async Task<IEnumerable<HistoricoEmail>> GetAllAsync()
         {
-            //return _context.HistoricoEmails
-            //    .Include(he => he.Destino)
-            //    .Include(he => he.Produto)
-            //    .ToList();
-            return null;
+            return _context.HistoricoEmails
+                .Include(he => he.Destino)
+                .Include(he => he.Produto)
+                .ToList();
         }
     }
 }
