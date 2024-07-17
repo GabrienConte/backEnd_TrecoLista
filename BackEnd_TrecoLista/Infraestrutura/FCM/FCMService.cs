@@ -7,15 +7,23 @@ namespace BackEnd_TrecoLista.Infraestrutura.FCM
 {
     public class FCMService : IFCMService
     {
+        private static readonly object _lock = new object();
         private static FirebaseApp _firebaseApp;
+
         public FCMService()
         {
-            if (_firebaseApp == null)
+            if (_firebaseApp is null)
             {
-                _firebaseApp = FirebaseApp.Create(new AppOptions()
+                lock (_lock)
                 {
-                    Credential = GoogleCredential.FromFile("Infraestrutura/Configurations/treco-lista-firebase-admin.json")
-                });
+                    if (_firebaseApp is null)
+                    {
+                        _firebaseApp = FirebaseApp.Create(new AppOptions()
+                        {
+                            Credential = GoogleCredential.FromFile("Infraestrutura/Configurations/treco-lista-firebase-admin.json")
+                        });
+                    }
+                }
             }
         }
 
@@ -31,7 +39,6 @@ namespace BackEnd_TrecoLista.Infraestrutura.FCM
                 }
             };
 
-            // Envia a mensagem
             return await FirebaseMessaging.DefaultInstance.SendAsync(message);
         }
 
@@ -47,7 +54,6 @@ namespace BackEnd_TrecoLista.Infraestrutura.FCM
                 }
             };
 
-            // Envia a mensagem
             var response = await FirebaseMessaging.DefaultInstance.SendMulticastAsync(message);
             return $"Successfully sent {response.SuccessCount} messages";
         }

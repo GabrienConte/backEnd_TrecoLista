@@ -16,8 +16,15 @@ using Microsoft.AspNetCore.Connections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using BackEnd_TrecoLista.Infraestrutura.FCM;
+using BackEnd_TrecoLista.Infraestrutura.Kafka;
+using BackEnd_TrecoLista.Infraestrutura.WebSocketHost;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Listen(System.Net.IPAddress.Any, 5075);
+});
 
 // Add services to the container.
 builder.Services.AddHttpClient();
@@ -83,6 +90,8 @@ builder.Services.AddTransient<IDispositivoTokenService, DispositivoTokenService>
 
 builder.Services.AddTransient<IFCMService, FCMService>();
 
+builder.Services.AddTransient<IKafkaProducerService, KafkaProducerService>();
+
 var AllowAllOrigins = "_AllowAllOrigins";
 
 builder.Services.AddCors(options =>
@@ -115,7 +124,15 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("tipo_usuario", "ADMIN"));
+});
+
 var app = builder.Build();
+
+app.UseWebSockets();
+app.UseMiddleware<WebSocketMiddleware>(app.Services.GetService<IHostApplicationLifetime>());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

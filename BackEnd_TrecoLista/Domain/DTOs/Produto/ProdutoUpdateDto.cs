@@ -4,8 +4,6 @@ namespace BackEnd_TrecoLista.Domain.DTOs.Produto
 {
     public class ProdutoUpdateDto
     {
-        [Required]
-        public int CategoriaId { get; set; }
 
         [Required]
         public int PlataformaId { get; set; }

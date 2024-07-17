@@ -26,6 +26,7 @@ namespace BackEnd_TrecoLista.Application.Controllers
             return Ok(categorias);
         }
 
+        [Authorize]
         [HttpGet("ativas")]
         public async Task<ActionResult<IEnumerable<CategoriaDto>>> GetCategoriasAtivas()
         {

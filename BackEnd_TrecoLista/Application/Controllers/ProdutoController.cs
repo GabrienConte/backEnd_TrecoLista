@@ -128,12 +128,28 @@ namespace BackEnd_TrecoLista.Application.Controllers
 
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         [Route("atualizarPrecosFavoritos")]
         public async Task<IActionResult> AtualizarPrecosFavoritos()
         {
-            await _produtoService.VerificarAtualizarPrecosFavoritosAsync();
-            return Ok("Atualização de preços dos produtos favoritados concluída.");
+            var userType = User.FindFirst("tipo_usuario")?.Value;
+
+            try
+            {
+                if (userType != "ADMIN")
+                {
+                    return Forbid("Acesso negado. Somente usuários do tipo ADMIN podem realizar esta ação.");
+                }
+
+                await _produtoService.VerificarAtualizarPrecosFavoritosAsync();
+                return Ok(new { message = "Atualização de preços dos produtos favoritados concluída." });
+            }
+            catch (HttpRequestException e)
+            {
+
+                return StatusCode(500, new { error = e.Message });
+            }
         }
 
         [Authorize]
@@ -143,29 +159,37 @@ namespace BackEnd_TrecoLista.Application.Controllers
             var userId = User.FindFirst("usuario_id")?.Value;
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            var favoritos = await _favoritoService.GetByUsuarioIdAsync(int.Parse(userId));
-            if (!favoritos.Any()) return NoContent();
 
-            var produtosDetalhes = new List<ProdutoCardDTO>();
-
-            foreach (var favorito in favoritos)
+            try
             {
-                var produto = await _produtoService.GetProdutoByIdAsync(favorito.ProdutoId);
-                if (produto != null)
+                var favoritos = await _favoritoService.GetByUsuarioIdAsync(int.Parse(userId));
+                if (!favoritos.Any()) return NoContent();
+
+                var produtosDetalhes = new List<ProdutoCardDTO>();
+
+                foreach (var favorito in favoritos)
                 {
-                    produtosDetalhes.Add(new ProdutoCardDTO
+                    var produto = await _produtoService.GetProdutoByIdAsync(favorito.ProdutoId);
+                    if (produto != null)
                     {
-                        ProdutoId = produto.Id,
-                        Link = produto.Link,
-                        Descricao = produto.Descricao,
-                        Valor = produto.Valor,
-                        ImagemPath = produto.ImagemPath,
-                        IsFavoritado = true
-                    });
+                        produtosDetalhes.Add(new ProdutoCardDTO
+                        {
+                            ProdutoId = produto.Id,
+                            Link = produto.Link,
+                            Descricao = produto.Descricao,
+                            Valor = produto.Valor,
+                            ImagemPath = produto.ImagemPath,
+                            IsFavoritado = true
+                        });
+                    }
                 }
+                return Ok(produtosDetalhes);
+            }
+            catch (HttpRequestException e)
+            {
+                return StatusCode(500, new { error = e.Message });
             }
 
-            return Ok(produtosDetalhes);
         }
 
         [Authorize]
@@ -175,24 +199,31 @@ namespace BackEnd_TrecoLista.Application.Controllers
             var userId = User.FindFirst("usuario_id")?.Value;
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            var favoritos = await _favoritoService.GetByUsuarioIdAsync(int.Parse(userId));
-            var favoritosProdutoIds = favoritos.Select(f => f.ProdutoId).ToList();
+            try
+            {
+                var favoritos = await _favoritoService.GetByUsuarioIdAsync(int.Parse(userId));
+                var favoritosProdutoIds = favoritos.Select(f => f.ProdutoId).ToList();
 
-            var todosProdutos = await _produtoService.GetAllAsync();
-            var produtosNaoFavoritados = todosProdutos
-                .Where(p => !favoritosProdutoIds.Contains(p.Id))
-                .Select(p => new ProdutoCardDTO
-                {
-                    ProdutoId = p.Id,
-                    Link = p.Link,
-                    Descricao = p.Descricao,
-                    Valor = p.Valor,
-                    ImagemPath = p.ImagemPath,
-                    IsFavoritado = false
-                })
-                .ToList();
+                var todosProdutos = await _produtoService.GetAllAsync();
+                var produtosNaoFavoritados = todosProdutos
+                    .Where(p => !favoritosProdutoIds.Contains(p.Id))
+                    .Select(p => new ProdutoCardDTO
+                    {
+                        ProdutoId = p.Id,
+                        Link = p.Link,
+                        Descricao = p.Descricao,
+                        Valor = p.Valor,
+                        ImagemPath = p.ImagemPath,
+                        IsFavoritado = false
+                    })
+                    .ToList();
 
-            return Ok(produtosNaoFavoritados);
+                return Ok(produtosNaoFavoritados);
+            }
+            catch (HttpRequestException e)
+            {
+                return StatusCode(500, new { error = e.Message });
+            }
         }
     }
 }

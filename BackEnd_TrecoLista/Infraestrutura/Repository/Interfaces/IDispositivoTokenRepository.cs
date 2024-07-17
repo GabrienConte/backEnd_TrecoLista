@@ -10,6 +10,6 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository.Interfaces
         Task<DispositivoToken> UpdateAsync(DispositivoToken dispositivoToken);
         Task<bool> DeleteAsync(int id);
         Task<string> GetTokenByUserIdAsync(int userId);
-        Task<List<string>> GetTokensByUserIdsAsync(List<int> userIds);
+        Task<List<string>> GetTokensByUserIdAsync(int userId);
     }
 }

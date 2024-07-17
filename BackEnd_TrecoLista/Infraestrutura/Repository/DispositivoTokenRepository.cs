@@ -55,10 +55,10 @@ namespace BackEnd_TrecoLista.Infraestrutura.Repository
             return dispositivoToken;
         }
 
-        public async Task<List<string>> GetTokensByUserIdsAsync(List<int> userIds)
+        public async Task<List<string>> GetTokensByUserIdAsync(int userId)
         {
             var dispositivoTokens = await _context.DispositivoTokens
-                .Where(dt => userIds.Contains(dt.UsuarioId))
+                .Where(dt => dt.UsuarioId == userId)
                 .Select(dt => dt.Token)
                 .ToListAsync();
 

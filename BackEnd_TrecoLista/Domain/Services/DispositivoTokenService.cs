@@ -79,15 +79,37 @@ namespace BackEnd_TrecoLista.Domain.Services
             return await _dispositivoTokenRepository.GetTokenByUserIdAsync(userId);
         }
 
-        public async Task<List<string>> GetTokensByUserIdsAsync(List<int> userIds)
+        public async Task<List<string>> GetTokensByUserIdAsync(int userId)
         {
-            return await _dispositivoTokenRepository.GetTokensByUserIdsAsync(userIds);
+            return await _dispositivoTokenRepository.GetTokensByUserIdAsync(userId);
         }
 
         public async Task EnviarNotificacaoMudouPrecoToUserAsync(int userId, string produtoDescricao, decimal novoPreco, decimal antigoPreco)
         {
-            var token = await _dispositivoTokenRepository.GetTokenByUserIdAsync(userId);
-            if (!string.IsNullOrEmpty(token))
+            var tokens = await _dispositivoTokenRepository.GetTokensByUserIdAsync(userId);
+            if (tokens != null)
+            {
+                if (tokens.Count == 1)
+                {
+                    var token = tokens[0];
+                    string title = "Um produto mudou de preço!";
+                    StringBuilder body = new StringBuilder();
+                    body.Append(String.Format("O seu favorito {0} teve uma alteração de preço! Preço novo:{1} Preço antigo:{2}",
+                        produtoDescricao,
+                        novoPreco,
+                        antigoPreco));
+
+                    await _fcmService.EnviarNotificacaoAsync(token, title, body.ToString());
+                } else
+                {
+                    await EnviarNotificacaoMudouPrecoToMultipleTokensAsync(tokens, produtoDescricao, novoPreco, antigoPreco);
+                }
+            }
+        }
+
+        public async Task EnviarNotificacaoMudouPrecoToMultipleTokensAsync(List<string> tokens, string produtoDescricao, decimal novoPreco, decimal antigoPreco)
+        {
+            if (tokens != null)
             {
                 string title = "Um produto mudou de preço!";
                 StringBuilder body = new StringBuilder();
@@ -96,13 +118,8 @@ namespace BackEnd_TrecoLista.Domain.Services
                     novoPreco,
                     antigoPreco));
 
-                await _fcmService.EnviarNotificacaoAsync(token, title, body.ToString());
+                await _fcmService.EnviarNotificacaoParaVariosDispositivosAsync(tokens, title, body.ToString());
             }
-        }
-
-        public async Task EnviarNotificacaoMudouPrecoToMultipleUsersAsync(List<int> userIds, string produtoDescricao, decimal novoPreco, decimal antigoPreco)
-        {
-            throw new NotImplementedException();
         }
     }
 

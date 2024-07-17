@@ -1,5 +1,6 @@
 ﻿using BackEnd_TrecoLista.Domain.Services.Interfaces;
 using BackEnd_TrecoLista.Infraestrutura.FCM;
+using BackEnd_TrecoLista.Infraestrutura.Kafka;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd_TrecoLista.Application.Controllers
@@ -9,11 +10,14 @@ namespace BackEnd_TrecoLista.Application.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly IFCMService _fcmService;
+        private readonly IKafkaProducerService _kafkaProducerService;
         private readonly IDispositivoTokenService _dispositivoTokenService;
+        private readonly Dictionary<int, Task> _activeConsumers = new();
 
-        public NotificationController(IFCMService fcmService, IDispositivoTokenService dispositivoTokenService)
+        public NotificationController(IFCMService fcmService, IDispositivoTokenService dispositivoTokenService, IKafkaProducerService kafkaProducerService)
         {
             _fcmService = fcmService;
+            _kafkaProducerService = kafkaProducerService;
             _dispositivoTokenService = dispositivoTokenService;
         }
 
@@ -31,19 +35,13 @@ namespace BackEnd_TrecoLista.Application.Controllers
             return Ok(result);
         }
 
-        [HttpPost("sendMultiple")]
-        public async Task<IActionResult> SendNotificationToMultipleDevices([FromBody] MultiNotificationRequest request)
+        [HttpPost("send-kafka")]
+        public async Task<IActionResult> SendNotificationKafka(int userId, string produtoDescricao, decimal novoPreco, decimal antigoPreco)
         {
-            var tokens = await _dispositivoTokenService.GetTokensByUserIdsAsync(request.UserIds);
-
-            if (tokens == null || tokens.Count == 0)
-            {
-                return BadRequest("Tokens not found");
-            }
-
-            var result = await _fcmService.EnviarNotificacaoParaVariosDispositivosAsync(tokens, request.Title, request.Message);
-            return Ok(result);
+            await _kafkaProducerService.EnviaNotificacaoAsync(userId, produtoDescricao, novoPreco, antigoPreco);
+            return Ok();
         }
+
     }
 
     public class NotificationRequest
